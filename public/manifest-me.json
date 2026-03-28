@@ -1,6 +1,6 @@
 {
-  "name": "CheckMark",
-  "short_name": "CheckMark",
+  "name": "Venzio",
+  "short_name": "Venzio",
   "description": "Your presence, your record. Track your own office attendance.",
   "start_url": "/me",
   "scope": "/me",

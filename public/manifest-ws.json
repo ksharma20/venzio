@@ -1,6 +1,6 @@
 {
-  "name": "CheckMark Workspace",
-  "short_name": "CheckMark WS",
+  "name": "Venzio Workspace",
+  "short_name": "Venzio WS",
   "description": "Presence intelligence for your team. See who's in the office today.",
   "start_url": "/ws",
   "scope": "/ws",
