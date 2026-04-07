@@ -7,7 +7,7 @@
 // Behaviour:
 //   Fresh DB  — creates every table + all columns; ALTER TABLE statements silently skip.
 //   Existing  — CREATE TABLE IF NOT EXISTS skips; ALTER TABLE adds missing columns.
-//   DB rename — if venzio.db absent but checkmark.db present, copies it automatically.
+//   DB rename — if venzio.db absent but venzio.db present, copies it automatically.
 
 const path = require('path')
 const fs   = require('fs')
