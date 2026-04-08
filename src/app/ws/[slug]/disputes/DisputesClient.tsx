@@ -106,17 +106,17 @@ export default function DisputesClient({ slug, tz }: Props) {
           onChange={(e) => setStartDate(e.target.value)}
           style={{
             height: '36px', padding: '0 10px', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+            borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
             background: 'var(--surface-0)', color: 'var(--text-primary)', outline: 'none',
           }}
         />
-        <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>to</span>
+        <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>to</span>
         <input
           type="date" value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           style={{
             height: '36px', padding: '0 10px', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+            borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
             background: 'var(--surface-0)', color: 'var(--text-primary)', outline: 'none',
           }}
         />
@@ -125,7 +125,7 @@ export default function DisputesClient({ slug, tz }: Props) {
           onClick={() => { const r = getThisMonthRange(); setStartDate(r.start); setEndDate(r.end) }}
           style={{
             height: '36px', padding: '0 12px', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+            borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
             background: 'var(--surface-2)', color: 'var(--text-secondary)', cursor: 'pointer',
           }}
         >
@@ -145,7 +145,7 @@ export default function DisputesClient({ slug, tz }: Props) {
           border: '1px solid var(--amber)', borderRadius: 'var(--radius-md)',
           padding: '16px 20px',
         }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>
             No location signals configured. Disputes only apply when WiFi, GPS, or IP signals are set up in Settings.
             Without signals, all check-ins are counted automatically.
           </p>
@@ -155,7 +155,7 @@ export default function DisputesClient({ slug, tz }: Props) {
           {/* Unmatched events */}
           <section style={{ marginBottom: '36px' }}>
             <h2 style={{
-              fontFamily: 'Syne, sans-serif', fontSize: '16px', fontWeight: 700,
+              fontFamily: 'Playfair Display, serif', fontSize: '16px', fontWeight: 700,
               color: 'var(--navy)', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px',
             }}>
               Not counted
@@ -174,7 +174,7 @@ export default function DisputesClient({ slug, tz }: Props) {
                 background: 'var(--surface-0)', border: '1px solid var(--border)',
                 borderRadius: 'var(--radius-lg)', padding: '32px', textAlign: 'center',
               }}>
-                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>
+                <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>
                   No unmatched events in this period.
                 </p>
               </div>
@@ -201,7 +201,7 @@ export default function DisputesClient({ slug, tz }: Props) {
           {overridden.length > 0 && (
             <section>
               <h2 style={{
-                fontFamily: 'Syne, sans-serif', fontSize: '16px', fontWeight: 700,
+                fontFamily: 'Playfair Display, serif', fontSize: '16px', fontWeight: 700,
                 color: 'var(--navy)', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px',
               }}>
                 Overridden (counted)
@@ -255,7 +255,7 @@ function EventRow({
       <div style={{
         width: '34px', height: '34px', borderRadius: '50%', flexShrink: 0,
         background: 'color-mix(in srgb, var(--danger) 12%, transparent)',
-        color: 'var(--danger)', fontFamily: 'DM Sans, sans-serif', fontSize: '12px', fontWeight: 700,
+        color: 'var(--danger)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: 700,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         {ini}
@@ -263,21 +263,21 @@ function EventRow({
 
       {/* Info */}
       <div style={{ flex: 1, minWidth: '180px' }}>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 2px' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 2px' }}>
           {ev.member_name}
         </p>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
           {ev.member_email}
         </p>
         <div style={{ marginTop: '6px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text-secondary)' }}>
             {formatUtc(ev.checkin_at, tz)}
           </span>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
+          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
             {durationHours(ev.checkin_at, ev.checkout_at)}
           </span>
           {ev.location_label && (
-            <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
+            <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
               📍 {ev.location_label}
             </span>
           )}
@@ -286,7 +286,7 @@ function EventRow({
           {mismatchMetres !== null && mismatchMetres > 0 && (
             <span title="Checked out from a different location" style={{
               display: 'inline-flex', alignItems: 'center', height: '18px', padding: '0 6px',
-              borderRadius: '4px', fontSize: '11px', fontFamily: 'DM Sans, sans-serif', fontWeight: 600,
+              borderRadius: '4px', fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600,
               color: 'var(--amber)', background: 'color-mix(in srgb, var(--amber) 10%, transparent)',
               border: '1px solid color-mix(in srgb, var(--amber) 35%, transparent)',
               whiteSpace: 'nowrap',
@@ -296,8 +296,8 @@ function EventRow({
           )}
         </div>
         {ev.note && (
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
-            &ldquo;{ev.note}&rdquo;
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
+            {ev.note}
           </p>
         )}
       </div>
@@ -312,7 +312,7 @@ function EventRow({
             onChange={(e) => onNoteChange(e.target.value)}
             style={{
               height: '32px', padding: '0 10px', fontSize: '12px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)',
               background: 'var(--surface-0)', color: 'var(--text-primary)',
               outline: 'none', width: '140px',
@@ -324,7 +324,7 @@ function EventRow({
             onClick={onOverride}
             style={{
               height: '32px', padding: '0 12px',
-              fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 600,
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 600,
               background: 'var(--teal)', color: '#fff',
               border: 'none', borderRadius: 'var(--radius-sm)',
               cursor: overriding ? 'default' : 'pointer',
@@ -337,7 +337,7 @@ function EventRow({
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <label style={{
-            fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)',
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)',
             whiteSpace: 'nowrap',
           }}>
             Effective checkout:
@@ -348,7 +348,7 @@ function EventRow({
             onChange={(e) => onCheckoutChange(e.target.value)}
             style={{
               height: '30px', padding: '0 8px', fontSize: '12px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)',
               background: 'var(--surface-0)', color: 'var(--text-primary)',
               outline: 'none',
@@ -377,13 +377,13 @@ function OverriddenRow({
       <div style={{
         width: '30px', height: '30px', borderRadius: '50%', flexShrink: 0,
         background: 'color-mix(in srgb, var(--teal) 15%, transparent)',
-        color: 'var(--teal)', fontFamily: 'DM Sans, sans-serif', fontSize: '11px', fontWeight: 700,
+        color: 'var(--teal)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 700,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         {ini}
       </div>
       <div style={{ flex: 1, minWidth: '180px' }}>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 2px' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', margin: '0 0 2px' }}>
           {ev.member_name}
           <span style={{ marginLeft: '8px', fontSize: '11px', color: 'var(--teal)', fontWeight: 400 }}>overridden</span>
         </p>
@@ -391,7 +391,7 @@ function OverriddenRow({
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text-secondary)' }}>
             {formatUtc(ev.checkin_at, tz)}
           </span>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
+          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
             {durationHours(ev.checkin_at, ev.checkout_at)}
           </span>
         </div>
@@ -402,7 +402,7 @@ function OverriddenRow({
         onClick={onRemove}
         style={{
           height: '30px', padding: '0 10px',
-          fontFamily: 'DM Sans, sans-serif', fontSize: '12px',
+          fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px',
           background: 'transparent', color: 'var(--danger)',
           border: '1px solid color-mix(in srgb, var(--danger) 40%, transparent)',
           borderRadius: 'var(--radius-sm)', cursor: removing ? 'default' : 'pointer',

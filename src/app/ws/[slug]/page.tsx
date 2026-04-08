@@ -40,7 +40,7 @@ export default async function WsDashboardPage({ params }: Props) {
             : 'color-mix(in srgb, var(--amber) 10%, transparent)',
           border: `1px solid ${atLimit ? 'var(--danger)' : 'var(--amber)'}`,
           borderRadius: 'var(--radius-md)', padding: '10px 14px', marginBottom: '16px',
-          fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+          fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
           color: atLimit ? 'var(--danger)' : 'var(--text-secondary)',
         }}>
           {atLimit
@@ -49,26 +49,29 @@ export default async function WsDashboardPage({ params }: Props) {
         </div>
       )}
 
-      {/* ── Today section ── */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', margin: 0 }}>
-          Today
-        </h1>
-        <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)' }}>
-          {todayDisplay}
-        </span>
-        <span style={{
-          fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--text-muted)',
-          background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: '4px', padding: '2px 6px',
-        }}>
-          {tz}
-        </span>
+      {/* ── Today section header ── */}
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ width: '3px', height: '22px', borderRadius: '2px', background: 'var(--brand)', flexShrink: 0 }} />
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', margin: 0 }}>
+            Today
+          </h1>
+          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)' }}>
+            {todayDisplay}
+          </span>
+          <span style={{
+            fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--text-muted)',
+            background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: '6px', padding: '3px 8px',
+          }}>
+            {tz}
+          </span>
+        </div>
       </div>
 
       <TodayClient slug={slug} tz={tz} />
 
       {/* Divider */}
-      <div style={{ borderTop: '1px solid var(--border)', margin: '32px 0 0' }} />
+      <div style={{ borderTop: '1px solid var(--border)', margin: '36px 0 0' }} />
 
       {/* ── Analytics section ── */}
       <AnalyticsClient slug={slug} />

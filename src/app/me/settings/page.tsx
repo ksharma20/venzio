@@ -20,7 +20,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
     >
       <h2
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '15px',
           fontWeight: 600,
           color: 'var(--navy)',
@@ -54,7 +54,7 @@ function FieldInput({
           display: 'block',
           fontSize: '12px',
           color: 'var(--text-secondary)',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           marginBottom: '5px',
         }}
       >
@@ -72,7 +72,7 @@ function FieldInput({
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-md)',
           fontSize: '14px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           background: 'var(--surface-2)',
           color: 'var(--text-primary)',
           outline: 'none',
@@ -113,7 +113,7 @@ function Btn({
         border,
         borderRadius: 'var(--radius-md)',
         fontSize: '14px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontWeight: 500,
         cursor: loading ? 'not-allowed' : 'pointer',
         opacity: loading ? 0.7 : 1,
@@ -130,7 +130,7 @@ function StatusMsg({ msg }: { msg: { text: string; ok: boolean } | null }) {
     <p
       style={{
         fontSize: '13px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         color: msg.ok ? 'var(--teal)' : 'var(--danger)',
         marginTop: '8px',
       }}
@@ -146,6 +146,12 @@ function ProfileSection({ initialName, email }: { initialName: string; email: st
   const [isEditing, setIsEditing] = useState(false)
   const [name, setName] = useState(initialName)
   const [savedName, setSavedName] = useState(initialName)
+
+  useEffect(() => {
+    setName(initialName)
+    setSavedName(initialName)
+  }, [initialName])
+  
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<{ text: string; ok: boolean } | null>(null)
 
@@ -170,19 +176,19 @@ function ProfileSection({ initialName, email }: { initialName: string; email: st
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div style={{ flex: 1 }}>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif', marginBottom: '4px' }}>Email</label>
-            <p style={{ fontSize: '14px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-muted)', padding: '6px 0' }}>{email}</p>
+            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '4px' }}>Email</label>
+            <p style={{ fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-muted)', padding: '6px 0' }}>{email}</p>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif', marginBottom: '4px' }}>Full name</label>
+            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '4px' }}>Full name</label>
             {isEditing
-              ? <input type="text" value={name} onChange={(e) => setName(e.target.value)} autoFocus style={{ width: '100%', height: '44px', padding: '0 12px', border: '1px solid var(--brand)', borderRadius: 'var(--radius-md)', fontSize: '14px', fontFamily: 'DM Sans, sans-serif', background: 'var(--surface-0)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
-              : <p style={{ fontSize: '14px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-primary)', padding: '6px 0' }}>{savedName || '—'}</p>
+              ? <input type="text" value={name} onChange={(e) => setName(e.target.value)} autoFocus style={{ width: '100%', height: '44px', padding: '0 12px', border: '1px solid var(--brand)', borderRadius: 'var(--radius-md)', fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', background: 'var(--surface-0)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
+              : <p style={{ fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-primary)', padding: '6px 0' }}>{savedName || '—'}</p>
             }
           </div>
         </div>
         {!isEditing && (
-          <button onClick={() => setIsEditing(true)} style={{ marginLeft: '12px', background: 'none', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '6px 14px', fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0 }}>Edit</button>
+          <button onClick={() => setIsEditing(true)} style={{ marginLeft: '12px', background: 'none', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '6px 14px', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0 }}>Edit</button>
         )}
       </div>
       {isEditing && (
@@ -191,7 +197,7 @@ function ProfileSection({ initialName, email }: { initialName: string; email: st
           <LoadingButton variant="outline" onClick={handleCancel}>Cancel</LoadingButton>
         </div>
       )}
-      {status && <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: status.ok ? 'var(--teal)' : 'var(--danger)', marginTop: '8px' }}>{status.text}</p>}
+      {status && <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: status.ok ? 'var(--teal)' : 'var(--danger)', marginTop: '8px' }}>{status.text}</p>}
     </SectionCard>
   )
 }
@@ -308,8 +314,8 @@ function PasswordSection() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {!isEditing && (
           <>
-            <p style={{ fontSize: '14px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-muted)' }}>••••••••</p>
-            <button onClick={() => setIsEditing(true)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '6px 14px', fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}>Edit</button>
+            <p style={{ fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-muted)' }}>••••••••</p>
+            <button onClick={() => setIsEditing(true)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '6px 14px', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}>Edit</button>
           </>
         )}
       </div>
@@ -324,7 +330,7 @@ function PasswordSection() {
           </div>
         </>
       )}
-      {status && <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: status.ok ? 'var(--teal)' : 'var(--danger)', marginTop: '8px' }}>{status.text}</p>}
+      {status && <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: status.ok ? 'var(--teal)' : 'var(--danger)', marginTop: '8px' }}>{status.text}</p>}
     </SectionCard>
   )
 }
@@ -387,7 +393,7 @@ function TokensSection() {
       <p
         style={{
           fontSize: '13px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           color: 'var(--text-secondary)',
           marginBottom: '14px',
         }}
@@ -410,7 +416,7 @@ function TokensSection() {
             style={{
               fontSize: '12px',
               color: 'var(--teal)',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               marginBottom: '6px',
             }}
           >
@@ -444,7 +450,7 @@ function TokensSection() {
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius-md)',
             fontSize: '13px',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
             background: 'var(--surface-2)',
             color: 'var(--text-primary)',
             outline: 'none',
@@ -458,7 +464,7 @@ function TokensSection() {
 
       {/* Token list */}
       {tokens.length === 0 ? (
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif' }}>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
           No tokens yet.
         </p>
       ) : (
@@ -473,7 +479,7 @@ function TokensSection() {
             }}
           >
             <div style={{ flex: 1 }}>
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-primary)' }}>
+              <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-primary)' }}>
                 {t.name}
               </p>
               <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--text-muted)' }}>
@@ -488,7 +494,7 @@ function TokensSection() {
                 border: 'none',
                 color: 'var(--danger)',
                 fontSize: '12px',
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
                 cursor: 'pointer',
                 padding: '4px 0',
               }}
@@ -525,7 +531,7 @@ function OrgSection() {
       <p
         style={{
           fontSize: "13px",
-          fontFamily: "DM Sans, sans-serif",
+          fontFamily: "Plus Jakarta Sans, sans-serif",
           color: "var(--text-secondary)",
           marginBottom: "16px",
           lineHeight: 1.5,
@@ -546,7 +552,7 @@ function OrgSection() {
           border: "none",
           borderRadius: "var(--radius-md)",
           fontSize: "14px",
-          fontFamily: "DM Sans, sans-serif",
+          fontFamily: "Plus Jakarta Sans, sans-serif",
           fontWeight: 500,
           textDecoration: "none",
         }}
@@ -570,7 +576,7 @@ function LogoutSection() {
 
   return (
     <SectionCard title="Session">
-      <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
+      <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
         {en.auth.sessionLogoutText}
       </p>
       <Btn onClick={logout} loading={loading} variant="outline">
@@ -617,7 +623,7 @@ function DeactivateCard() {
     >
       <p
         style={{
-          fontFamily: "DM Sans, sans-serif",
+          fontFamily: "Plus Jakarta Sans, sans-serif",
           fontSize: "13px",
           fontWeight: 600,
           color: "var(--text-primary)",
@@ -628,7 +634,7 @@ function DeactivateCard() {
       </p>
       <p
         style={{
-          fontFamily: "DM Sans, sans-serif",
+          fontFamily: "Plus Jakarta Sans, sans-serif",
           fontSize: "12px",
           color: "var(--text-secondary)",
           lineHeight: 1.5,
@@ -653,7 +659,7 @@ function DeactivateCard() {
         >
           <p
             style={{
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "12px",
               fontWeight: 600,
               color: "var(--text-primary)",
@@ -668,7 +674,7 @@ function DeactivateCard() {
           </p>
           <p
             style={{
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "12px",
               color: "var(--text-secondary)",
               lineHeight: 1.5,
@@ -688,7 +694,7 @@ function DeactivateCard() {
                 <a
                   href={`/ws/${ws.slug}/people`}
                   style={{
-                    fontFamily: "DM Sans, sans-serif",
+                    fontFamily: "Plus Jakarta Sans, sans-serif",
                     fontSize: "12px",
                     color: "var(--brand)",
                     textDecoration: "none",
@@ -700,7 +706,7 @@ function DeactivateCard() {
                   style={{
                     fontSize: "11px",
                     color: "var(--text-muted)",
-                    fontFamily: "DM Sans, sans-serif",
+                    fontFamily: "Plus Jakarta Sans, sans-serif",
                   }}
                 >
                   or
@@ -708,7 +714,7 @@ function DeactivateCard() {
                 <a
                   href={`/ws/${ws.slug}/settings`}
                   style={{
-                    fontFamily: "DM Sans, sans-serif",
+                    fontFamily: "Plus Jakarta Sans, sans-serif",
                     fontSize: "12px",
                     color: "var(--text-secondary)",
                     textDecoration: "none",
@@ -734,7 +740,7 @@ function DeactivateCard() {
             borderRadius: "var(--radius-sm)",
             background: "transparent",
             color: "var(--danger)",
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             fontSize: "13px",
             cursor: "pointer",
           }}
@@ -745,7 +751,7 @@ function DeactivateCard() {
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <p
             style={{
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "12px",
               color: "var(--danger)",
               margin: 0,
@@ -765,7 +771,7 @@ function DeactivateCard() {
                 color: "#fff",
                 border: "none",
                 borderRadius: "var(--radius-sm)",
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 fontSize: "13px",
                 fontWeight: 600,
                 cursor: loading ? "not-allowed" : "pointer",
@@ -784,7 +790,7 @@ function DeactivateCard() {
                 color: "var(--text-secondary)",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius-sm)",
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 fontSize: "13px",
                 cursor: "pointer",
               }}
@@ -824,7 +830,7 @@ function DangerSection() {
       >
         <span
           style={{
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             fontSize: "13px",
           }}
         >
@@ -832,7 +838,7 @@ function DangerSection() {
         </span>
         <span
           style={{
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             fontSize: "14px",
             color: "var(--text-muted)",
             transform: open ? "rotate(180deg)" : "none",
@@ -886,7 +892,7 @@ export default function SettingsPage() {
     <div style={{ maxWidth: "480px", margin: "0 auto", padding: "20px 16px" }}>
       <h1
         style={{
-          fontFamily: "Syne, sans-serif",
+          fontFamily: "Playfair Display, serif",
           fontSize: "22px",
           fontWeight: 700,
           color: "var(--navy)",

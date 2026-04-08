@@ -72,7 +72,7 @@ export default function TimelinePage() {
       {/* Header */}
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -97,7 +97,7 @@ export default function TimelinePage() {
               display: 'block',
               fontSize: '11px',
               color: 'var(--text-muted)',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               marginBottom: '4px',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -116,7 +116,7 @@ export default function TimelinePage() {
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)',
               fontSize: '13px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               background: 'var(--surface-0)',
               color: 'var(--text-primary)',
             }}
@@ -128,7 +128,7 @@ export default function TimelinePage() {
               display: 'block',
               fontSize: '11px',
               color: 'var(--text-muted)',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               marginBottom: '4px',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -147,7 +147,7 @@ export default function TimelinePage() {
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)',
               fontSize: '13px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               background: 'var(--surface-0)',
               color: 'var(--text-primary)',
             }}
@@ -161,7 +161,7 @@ export default function TimelinePage() {
           style={{
             fontSize: '13px',
             color: 'var(--text-muted)',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
             marginBottom: '16px',
           }}
         >
@@ -194,7 +194,7 @@ export default function TimelinePage() {
             textAlign: 'center',
             padding: '48px 0',
             color: 'var(--text-muted)',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
           }}
         >
           <p>No check-ins in this date range.</p>
@@ -209,7 +209,7 @@ export default function TimelinePage() {
           <section key={date} style={{ marginBottom: '20px' }}>
             <h2
               style={{
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
                 fontSize: '13px',
                 fontWeight: 500,
                 color: 'var(--text-secondary)',

@@ -120,14 +120,14 @@ function MemberRow({ member, daysInMonth, year, month, signalsConfigured }: Memb
         <div style={{
           width: '30px', height: '30px', borderRadius: '50%', flexShrink: 0,
           background: 'color-mix(in srgb, var(--brand) 12%, transparent)',
-          color: 'var(--brand)', fontFamily: 'DM Sans, sans-serif', fontSize: '11px', fontWeight: 700,
+          color: 'var(--brand)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 700,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {ini}
         </div>
         <div style={{ minWidth: 0 }}>
           <div style={{
-            fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 500,
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 500,
             color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>
             {member.name}
@@ -255,14 +255,14 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
               width: '32px', height: '32px', border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)', background: 'var(--surface-0)',
               cursor: isAtHistoryLimit ? 'default' : 'pointer', opacity: isAtHistoryLimit ? 0.4 : 1,
-              fontFamily: 'DM Sans, sans-serif', fontSize: '16px', color: 'var(--text-secondary)',
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '16px', color: 'var(--text-secondary)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
             ‹
           </button>
           <span style={{
-            fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '18px',
+            fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '18px',
             color: 'var(--navy)', minWidth: '160px', textAlign: 'center',
           }}>
             {MONTH_NAMES[month - 1]} {year}
@@ -275,7 +275,7 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
               width: '32px', height: '32px', border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)', background: 'var(--surface-0)',
               cursor: isFutureMonth ? 'default' : 'pointer', opacity: isFutureMonth ? 0.4 : 1,
-              fontFamily: 'DM Sans, sans-serif', fontSize: '16px', color: 'var(--text-secondary)',
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '16px', color: 'var(--text-secondary)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
@@ -289,7 +289,7 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
                 height: '32px', padding: '0 10px',
                 border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)',
                 background: 'var(--surface-2)', color: 'var(--text-secondary)',
-                fontFamily: 'DM Sans, sans-serif', fontSize: '12px', cursor: 'pointer',
+                fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', cursor: 'pointer',
               }}
             >
               Today
@@ -306,7 +306,7 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
               height: '32px', padding: '0 14px',
               border: '1px solid var(--brand)', borderRadius: 'var(--radius-sm)',
               background: 'transparent', color: 'var(--brand)',
-              fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 600,
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 600,
               cursor: (exporting || !data) ? 'default' : 'pointer',
               opacity: (exporting || !data) ? 0.5 : 1,
               marginLeft: 'auto',
@@ -326,7 +326,7 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
           )}
           <LegendItem color="color-mix(in srgb, var(--danger) 15%, transparent)" border="color-mix(in srgb, var(--danger) 35%, transparent)" label="Absent" />
           <LegendItem color="var(--surface-2)" border="var(--border)" label="Weekend" />
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginLeft: 'auto' }}>
+          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginLeft: 'auto' }}>
             {data.working_days} working days
           </span>
         </div>
@@ -371,10 +371,10 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
           background: 'var(--surface-0)', border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)', padding: '40px 24px', textAlign: 'center',
         }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', margin: '0 0 4px' }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', margin: '0 0 4px' }}>
             This month is outside your plan&apos;s history window.
           </p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
             Upgrade to access more history.
           </p>
         </div>
@@ -383,7 +383,7 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
           background: 'var(--surface-0)', border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)', padding: '40px 24px', textAlign: 'center',
         }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>
             No active members to display.
           </p>
         </div>
@@ -396,7 +396,7 @@ export default function MonthlyClient({ slug, tz: _tz, canExport, historyMonths 
             <div style={{
               padding: '10px 16px', background: 'color-mix(in srgb, var(--amber) 8%, transparent)',
               borderBottom: '1px solid var(--border)',
-              fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)',
+              fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)',
             }}>
               No location signals configured — all check-ins counted as present. Configure GPS/WiFi signals in Settings to distinguish office vs remote.
             </div>
@@ -424,7 +424,7 @@ function LegendItem({ color, border, label }: { color: string; border: string; l
         width: '14px', height: '14px', borderRadius: '3px',
         background: color, border: `1px solid ${border}`,
       }} />
-      <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-secondary)' }}>
+      <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-secondary)' }}>
         {label}
       </span>
     </div>

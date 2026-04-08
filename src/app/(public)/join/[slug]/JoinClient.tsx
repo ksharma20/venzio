@@ -39,7 +39,7 @@ export default function JoinClient({ memberId, workspaceName }: Props) {
     <div>
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -50,7 +50,7 @@ export default function JoinClient({ memberId, workspaceName }: Props) {
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '14px',
           color: 'var(--text-secondary)',
           marginBottom: '24px',
@@ -71,7 +71,7 @@ export default function JoinClient({ memberId, workspaceName }: Props) {
             color: '#fff',
             border: 'none',
             borderRadius: 'var(--radius-md)',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
             fontWeight: 600,
             fontSize: '15px',
             cursor: loading ? 'not-allowed' : 'pointer',
@@ -90,7 +90,7 @@ export default function JoinClient({ memberId, workspaceName }: Props) {
             color: 'var(--text-secondary)',
             border: '1px solid var(--border)',
             borderRadius: 'var(--radius-md)',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
             fontSize: '15px',
             cursor: loading ? 'not-allowed' : 'pointer',
             opacity: loading ? 0.7 : 1,
@@ -101,7 +101,7 @@ export default function JoinClient({ memberId, workspaceName }: Props) {
       </div>
 
       {error && (
-        <p style={{ marginTop: '10px', fontSize: '13px', color: 'var(--danger)', fontFamily: 'DM Sans, sans-serif' }}>
+        <p style={{ marginTop: '10px', fontSize: '13px', color: 'var(--danger)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
           {error}
         </p>
       )}

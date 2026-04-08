@@ -67,7 +67,7 @@ function TrustPopover({ flags }: { flags: string[] }) {
           fontSize: "11px",
           color: "var(--amber)",
           cursor: "pointer",
-          fontFamily: "DM Sans, sans-serif",
+          fontFamily: "Plus Jakarta Sans, sans-serif",
           fontWeight: 600,
         }}
       >
@@ -91,7 +91,7 @@ function TrustPopover({ flags }: { flags: string[] }) {
         >
           <p
             style={{
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "12px",
               fontWeight: 600,
               color: "var(--amber)",
@@ -104,7 +104,7 @@ function TrustPopover({ flags }: { flags: string[] }) {
             <p
               key={f}
               style={{
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 fontSize: "11px",
                 color: "var(--text-secondary)",
                 marginBottom: "4px",
@@ -164,7 +164,7 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
             style={{
               fontSize: "12px",
               color: "var(--text-muted)",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
             }}
           >
             {dur}
@@ -174,7 +174,7 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
           style={{
             marginLeft: "auto",
             fontSize: "11px",
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             fontWeight: 600,
             color: badge.color,
             background: `color-mix(in srgb,${badge.color} 12%,transparent)`,
@@ -190,7 +190,7 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
           <span
             style={{
               fontSize: "11px",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               color: "var(--amber)",
               background: "color-mix(in srgb,var(--amber) 12%,transparent)",
               padding: "2px 7px",
@@ -223,7 +223,7 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
               fontSize: "11px",
               color: "var(--brand)",
               textDecoration: "none",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
             }}
           >
             ◉{" "}
@@ -248,7 +248,7 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
           style={{
             marginTop: "6px",
             fontSize: "12px",
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             color: "var(--text-secondary)",
             fontStyle: "italic",
           }}
@@ -258,6 +258,23 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
       )}
     </div>
   );
+}
+
+function formatDayHeading(isoDate: string): string {
+  const d = new Date(isoDate);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function groupByDay(events: EventWithMatch[]): { date: string; label: string; items: EventWithMatch[] }[] {
+  const map = new Map<string, EventWithMatch[]>();
+  for (const ev of events) {
+    const day = ev.checkin_at.slice(0, 10); // YYYY-MM-DD
+    if (!map.has(day)) map.set(day, []);
+    map.get(day)!.push(ev);
+  }
+  return Array.from(map.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([date, items]) => ({ date, label: formatDayHeading(date + 'T00:00:00'), items }));
 }
 
 export default function MemberDetailPage() {
@@ -340,7 +357,7 @@ export default function MemberDetailPage() {
               alignItems: "center",
               justifyContent: "center",
               fontSize: "18px",
-              fontFamily: "Syne, sans-serif",
+              fontFamily: "Playfair Display, serif",
               fontWeight: 700,
               flexShrink: 0,
             }}
@@ -350,7 +367,7 @@ export default function MemberDetailPage() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <p
               style={{
-                fontFamily: "Syne, sans-serif",
+                fontFamily: "Playfair Display, serif",
                 fontSize: "16px",
                 fontWeight: 700,
                 color: "var(--navy)",
@@ -361,7 +378,7 @@ export default function MemberDetailPage() {
             </p>
             <p
               style={{
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 fontSize: "13px",
                 color: "var(--text-secondary)",
                 overflow: "hidden",
@@ -375,7 +392,7 @@ export default function MemberDetailPage() {
           <span
             style={{
               fontSize: "11px",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontWeight: 600,
               color: "var(--brand)",
               background: "color-mix(in srgb,var(--brand) 10%,transparent)",
@@ -393,7 +410,7 @@ export default function MemberDetailPage() {
           <div>
             <p
               style={{
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 fontSize: "11px",
                 color: "var(--text-muted)",
                 textTransform: "uppercase",
@@ -417,7 +434,7 @@ export default function MemberDetailPage() {
           <div>
             <p
               style={{
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 fontSize: "11px",
                 color: "var(--text-muted)",
                 textTransform: "uppercase",
@@ -452,7 +469,7 @@ export default function MemberDetailPage() {
       >
         <h2
           style={{
-            fontFamily: "Syne, sans-serif",
+            fontFamily: "Playfair Display, serif",
             fontSize: "15px",
             fontWeight: 600,
             color: "var(--navy)",
@@ -462,7 +479,7 @@ export default function MemberDetailPage() {
         </h2>
         <span
           style={{
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             fontSize: "12px",
             color: "var(--text-muted)",
           }}
@@ -488,7 +505,7 @@ export default function MemberDetailPage() {
           style={{
             textAlign: "center",
             color: "var(--text-muted)",
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             padding: "40px 0",
           }}
         >
@@ -496,8 +513,60 @@ export default function MemberDetailPage() {
         </p>
       )}
 
-      {events.map((ev) => (
-        <EventRow key={ev.id} ev={ev} />
+      {groupByDay(events).map(({ date, label, items }) => (
+        <div key={date} style={{ marginBottom: '8px' }}>
+          {/* Day heading */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '10px',
+              marginTop: '20px',
+            }}
+          >
+            <div
+              style={{
+                width: '3px',
+                height: '16px',
+                borderRadius: '2px',
+                background: 'var(--brand)',
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontSize: '13px',
+                fontWeight: 700,
+                color: 'var(--text-secondary)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {label}
+            </span>
+            <div
+              style={{
+                flex: 1,
+                height: '1px',
+                background: 'rgba(29,158,117,0.3)',
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                fontSize: '11px',
+                color: 'var(--text-muted)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {items.length} {items.length === 1 ? 'event' : 'events'}
+            </span>
+          </div>
+          {items.map((ev) => (
+            <EventRow key={ev.id} ev={ev} />
+          ))}
+        </div>
       ))}
 
       {pagination.pages > 1 && (
@@ -517,7 +586,7 @@ export default function MemberDetailPage() {
               border: "1px solid var(--border)",
               borderRadius: "var(--radius-sm)",
               background: "transparent",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "13px",
               cursor: page <= 1 ? "not-allowed" : "pointer",
               opacity: page <= 1 ? 0.4 : 1,
@@ -528,7 +597,7 @@ export default function MemberDetailPage() {
           <span
             style={{
               padding: "6px 12px",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "13px",
               color: "var(--text-muted)",
             }}
@@ -543,7 +612,7 @@ export default function MemberDetailPage() {
               border: "1px solid var(--border)",
               borderRadius: "var(--radius-sm)",
               background: "transparent",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontSize: "13px",
               cursor: page >= pagination.pages ? "not-allowed" : "pointer",
               opacity: page >= pagination.pages ? 0.4 : 1,

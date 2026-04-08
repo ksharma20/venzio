@@ -2,6 +2,7 @@ import { getServerUser } from '@/lib/auth'
 import { getOpenEventToday, getUserEvents } from '@/lib/db/queries/events'
 import { getUserStats } from '@/lib/db/queries/stats'
 import { getUserWorkspaces, getWorkspacesByIds } from '@/lib/db/queries/workspaces'
+import { getUserById } from '@/lib/db/queries/users'
 import CheckinButtons from '@/components/user/CheckinButtons'
 import EventCard from '@/components/user/EventCard'
 import TimezoneReporter from '@/components/user/TimezoneReporter'
@@ -15,12 +16,13 @@ export default async function MePage() {
   const monthStr = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-01`
   const nextMonthDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
 
-  const [activeEvent, todayResult, monthResult, stats, memberships] = await Promise.all([
+  const [activeEvent, todayResult, monthResult, stats, memberships, profile] = await Promise.all([
     getOpenEventToday(user.userId),
     getUserEvents({ userId: user.userId, start: `${todayStr}T00:00:00.000Z`, end: `${todayStr}T23:59:59.999Z` }),
     getUserEvents({ userId: user.userId, start: `${monthStr}T00:00:00.000Z`, end: nextMonthDate.toISOString(), limit: 500 }),
     getUserStats(user.userId),
     getUserWorkspaces(user.userId),
+    getUserById(user.userId),
   ])
 
   const todayEvents = todayResult.events
@@ -66,7 +68,7 @@ export default async function MePage() {
       <TimezoneReporter />
 
       {/* Check-in / checkout buttons (includes status line + active indicator) */}
-      <CheckinButtons activeEvent={activeEvent} />
+      <CheckinButtons activeEvent={activeEvent} name={profile?.full_name ?? user.email.split('@')[0]} />
 
       {/* This month stat chips */}
       <div
@@ -94,8 +96,8 @@ export default async function MePage() {
           >
             <div
               style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: chip.valueSize,
+                fontFamily: 'Playfair Display, serif',
+                fontSize: '22px',
                 fontWeight: 700,
                 color: 'var(--navy)',
                 lineHeight: 1,
@@ -105,7 +107,7 @@ export default async function MePage() {
             </div>
             <div
               style={{
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
                 fontSize: '12px',
                 color: 'var(--text-muted)',
                 marginTop: '2px',
@@ -122,7 +124,7 @@ export default async function MePage() {
         <section style={{ marginBottom: '24px' }}>
           <h2
             style={{
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'Playfair Display, serif',
               fontSize: '14px',
               fontWeight: 600,
               color: 'var(--text-secondary)',
@@ -144,7 +146,7 @@ export default async function MePage() {
         <section>
           <h2
             style={{
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'Playfair Display, serif',
               fontSize: '14px',
               fontWeight: 600,
               color: 'var(--text-secondary)',
@@ -174,7 +176,7 @@ export default async function MePage() {
                 <div>
                   <div
                     style={{
-                      fontFamily: 'DM Sans, sans-serif',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
                       fontWeight: 500,
                       fontSize: '14px',
                       color: 'var(--text-primary)',
@@ -184,7 +186,7 @@ export default async function MePage() {
                   </div>
                   <div
                     style={{
-                      fontFamily: 'DM Sans, sans-serif',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
                       fontSize: '12px',
                       color: 'var(--text-muted)',
                     }}
@@ -200,7 +202,7 @@ export default async function MePage() {
                 >
                   <div
                     style={{
-                      fontFamily: 'Syne, sans-serif',
+                      fontFamily: 'Playfair Display, serif',
                       fontWeight: 700,
                       fontSize: '18px',
                       color: 'var(--navy)',
@@ -210,7 +212,7 @@ export default async function MePage() {
                   </div>
                   <div
                     style={{
-                      fontFamily: 'DM Sans, sans-serif',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
                       fontSize: '11px',
                       color: 'var(--text-muted)',
                     }}
@@ -236,10 +238,10 @@ export default async function MePage() {
             borderRadius: 'var(--radius-lg)',
           }}
         >
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
             Tap &ldquo;I&apos;m here&rdquo; when you arrive somewhere.
           </p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
             Your check-in history will build up here over time.
           </p>
         </div>

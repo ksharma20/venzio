@@ -27,7 +27,7 @@ export default async function OrgsPage() {
     <div style={{ maxWidth: '480px', margin: '0 auto', padding: '20px 16px' }}>
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',

@@ -13,13 +13,13 @@ export default async function DisputesPage({ params }: Props) {
     <div style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 20px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{
-          fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700,
+          fontFamily: 'Playfair Display, serif', fontSize: '22px', fontWeight: 700,
           color: 'var(--navy)', margin: '0 0 6px',
         }}>
           Disputes
         </h1>
         <p style={{
-          fontFamily: 'DM Sans, sans-serif', fontSize: '14px',
+          fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px',
           color: 'var(--text-secondary)', margin: 0,
         }}>
           Events that were not matched by any signal. Override individual events to count them toward attendance.

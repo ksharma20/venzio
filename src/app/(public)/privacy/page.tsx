@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 const S = {
   section: { maxWidth: '760px', margin: '0 auto', padding: '80px 24px' } as React.CSSProperties,
-  h1: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 44px)', lineHeight: 1.1, letterSpacing: '-1px', color: 'var(--navy)', margin: '0 0 8px' } as React.CSSProperties,
-  h2: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '22px', color: 'var(--navy)', margin: '48px 0 12px', letterSpacing: '-0.3px' } as React.CSSProperties,
+  h1: { fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 44px)', lineHeight: 1.1, letterSpacing: '-1px', color: 'var(--navy)', margin: '0 0 8px' } as React.CSSProperties,
+  h2: { fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '22px', color: 'var(--navy)', margin: '48px 0 12px', letterSpacing: '-0.3px' } as React.CSSProperties,
   body: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.8, margin: '0 0 16px' } as React.CSSProperties,
   li: { fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.8 } as React.CSSProperties,
 }
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
             fontSize: "12px",
             color: "var(--text-muted)",
             margin: "0 0 12px",
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
           }}
         >
           Effective date: 17 March 2026 · Last updated: 17 March 2026
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
               width: "100%",
               borderCollapse: "collapse",
               fontSize: "14px",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
             }}
           >
             <thead>

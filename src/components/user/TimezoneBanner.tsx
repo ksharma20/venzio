@@ -52,7 +52,7 @@ export default function TimezoneBanner({ storedTimezone, confirmed }: Props) {
         borderRadius: 'var(--radius-md)',
         padding: '12px 14px',
         marginBottom: '16px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: '13px',
         color: 'var(--text-secondary)',
       }}
@@ -77,7 +77,7 @@ export default function TimezoneBanner({ storedTimezone, confirmed }: Props) {
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-sm)',
               fontSize: '13px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               background: 'var(--surface-0)',
               outline: 'none',
             }}
@@ -92,7 +92,7 @@ export default function TimezoneBanner({ storedTimezone, confirmed }: Props) {
               borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               color: 'var(--text-secondary)',
             }}
           >
@@ -115,7 +115,7 @@ export default function TimezoneBanner({ storedTimezone, confirmed }: Props) {
             fontSize: '12px',
             fontWeight: 600,
             cursor: saving ? 'not-allowed' : 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
           }}
         >
           {saving ? 'Saving…' : 'Confirm'}
@@ -131,7 +131,7 @@ export default function TimezoneBanner({ storedTimezone, confirmed }: Props) {
               borderRadius: 'var(--radius-sm)',
               fontSize: '12px',
               cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               color: 'var(--text-secondary)',
             }}
           >

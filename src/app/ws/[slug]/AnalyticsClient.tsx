@@ -54,27 +54,42 @@ function fmtDate(d: string): string {
   return `${parseInt(day)} ${months[parseInt(m) - 1]} ${y}`
 }
 
-function StatChip({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
+function StatChip({ label, value, sub, icon }: { label: string; value: string | number; sub?: string; icon: React.ReactNode }) {
   return (
     <div style={{
       background: 'var(--surface-0)',
       border: '1px solid var(--border)',
       borderRadius: 'var(--radius-md)',
-      padding: '14px 18px',
+      padding: '16px 18px',
       flex: '1 1 120px',
-      minWidth: '100px',
+      minWidth: '110px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
     }}>
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '4px' }}>
-        {label}
-      </p>
-      <p style={{ fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', lineHeight: 1 }}>
-        {value}
-      </p>
-      {sub && (
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-          {sub}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          {label}
         </p>
-      )}
+        <div style={{
+          width: '30px', height: '30px', borderRadius: '8px',
+          background: 'color-mix(in srgb, var(--brand) 12%, transparent)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          color: 'var(--brand)',
+        }}>
+          {icon}
+        </div>
+      </div>
+      <div>
+        <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '24px', fontWeight: 700, color: 'var(--navy)', lineHeight: 1 }}>
+          {value}
+        </p>
+        {sub && (
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+            {sub}
+          </p>
+        )}
+      </div>
     </div>
   )
 }
@@ -94,7 +109,7 @@ function DayBar({ value, max, color }: { value: number; max: number; color: stri
 }
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'DM Sans, sans-serif',
+  fontFamily: 'Plus Jakarta Sans, sans-serif',
   fontSize: '11px',
   fontWeight: 600,
   color: 'var(--text-muted)',
@@ -111,16 +126,16 @@ function MemberCard({ m, workingDays, signalsConfigured }: { m: AnalyticsMember;
         <div style={{
           width: '34px', height: '34px', borderRadius: '50%', flexShrink: 0,
           background: 'color-mix(in srgb, var(--brand) 15%, transparent)',
-          color: 'var(--brand)', fontFamily: 'DM Sans, sans-serif', fontSize: '12px', fontWeight: 700,
+          color: 'var(--brand)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: 700,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {initials}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {m.name}
           </div>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {m.email}
           </div>
         </div>
@@ -128,8 +143,8 @@ function MemberCard({ m, workingDays, signalsConfigured }: { m: AnalyticsMember;
           <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>
             {fmtHours(m.total_hours)}
           </div>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>
-            {fmtHours(m.avg_daily_hours)} avg
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>
+            {m.avg_daily_hours}h avg
           </div>
         </div>
       </div>
@@ -158,7 +173,7 @@ function MemberCard({ m, workingDays, signalsConfigured }: { m: AnalyticsMember;
         </div>
       </div>
       {m.multi_location_days > 0 && (
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '10px', color: 'var(--amber)', marginTop: '6px' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '10px', color: 'var(--amber)', marginTop: '6px' }}>
           {m.multi_location_days} multi-location days
         </p>
       )}
@@ -174,27 +189,27 @@ function MemberRow({ m, workingDays, signalsConfigured }: { m: AnalyticsMember; 
       display: 'grid',
       gridTemplateColumns: signalsConfigured
         ? '200px 1fr 1fr 1fr 90px 90px'
-        : '200px 1fr 1fr 90px',
+        : '200px 1fr 1fr 90px 90px',
       gap: '16px',
       alignItems: 'center',
       padding: '14px 16px',
       borderBottom: '1px solid var(--border)',
-      minWidth: signalsConfigured ? '720px' : '520px',
+      minWidth: signalsConfigured ? '720px' : '620px',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
         <div style={{
           width: '32px', height: '32px', borderRadius: '50%',
           background: 'color-mix(in srgb, var(--brand) 15%, transparent)',
-          color: 'var(--brand)', fontFamily: 'DM Sans, sans-serif', fontSize: '12px', fontWeight: 700,
+          color: 'var(--brand)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: 700,
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
           {initials}
         </div>
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {m.name}
           </div>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {m.email}
           </div>
         </div>
@@ -203,41 +218,41 @@ function MemberRow({ m, workingDays, signalsConfigured }: { m: AnalyticsMember; 
       {signalsConfigured && (
         <div>
           <DayBar value={m.office_days} max={workingDays} color="var(--teal)" />
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>office</p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>office</p>
         </div>
       )}
 
       {signalsConfigured ? (
         <div>
           <DayBar value={m.wfh_days} max={workingDays} color="var(--amber)" />
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>remote</p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>remote</p>
         </div>
       ) : (
         <div>
           <DayBar value={m.office_days + m.wfh_days} max={workingDays} color="var(--brand)" />
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>present</p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>present</p>
         </div>
       )}
 
       <div>
         <DayBar value={m.absent_days} max={workingDays} color="var(--danger)" />
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>absent</p>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>absent</p>
       </div>
 
       <div style={{ textAlign: 'right' }}>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>
           {fmtHours(m.total_hours)}
         </p>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>total</p>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>total</p>
       </div>
 
       <div style={{ textAlign: 'right' }}>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>
           {fmtHours(m.avg_daily_hours)}
         </p>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>avg/day</p>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>avg/day</p>
         {m.multi_location_days > 0 && (
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '10px', color: 'var(--amber)', marginTop: '2px' }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '10px', color: 'var(--amber)', marginTop: '2px' }}>
             {m.multi_location_days} multi-loc
           </p>
         )}
@@ -252,11 +267,11 @@ function TableHeader({ signalsConfigured }: { signalsConfigured: boolean }) {
       display: 'grid',
       gridTemplateColumns: signalsConfigured
         ? '200px 1fr 1fr 1fr 90px 90px'
-        : '200px 1fr 1fr 90px',
+        : '200px 1fr 1fr 90px 90px',
       gap: '16px',
       padding: '10px 16px',
       borderBottom: '1px solid var(--border)',
-      minWidth: signalsConfigured ? '720px' : '520px',
+      minWidth: signalsConfigured ? '720px' : '620px',
     }}>
       <p style={labelStyle}>Member</p>
       {signalsConfigured && <p style={labelStyle}>Office</p>}
@@ -317,11 +332,11 @@ export default function AnalyticsClient({ slug }: Props) {
       {/* Section header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '18px', fontWeight: 700, color: 'var(--navy)', margin: 0 }}>
+          <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '18px', fontWeight: 700, color: 'var(--navy)', margin: 0 }}>
             Analytics
           </h2>
           {data && (
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px' }}>
               {fmtDate(data.start_date)} – {fmtDate(data.end_date)} · {data.working_days} working days
             </p>
           )}
@@ -336,12 +351,12 @@ export default function AnalyticsClient({ slug }: Props) {
             style={{
               height: '36px', padding: '0 10px',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-              fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+              fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
               background: 'var(--surface-0)', color: 'var(--text-primary)',
               outline: 'none',
             }}
           />
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>to</span>
+          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>to</span>
           <input
             type="date"
             value={endDate}
@@ -349,7 +364,7 @@ export default function AnalyticsClient({ slug }: Props) {
             style={{
               height: '36px', padding: '0 10px',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-              fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+              fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
               background: 'var(--surface-0)', color: 'var(--text-primary)',
               outline: 'none',
             }}
@@ -360,7 +375,7 @@ export default function AnalyticsClient({ slug }: Props) {
             style={{
               height: '36px', padding: '0 12px',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-              fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+              fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
               background: 'var(--surface-2)', color: 'var(--text-secondary)',
               cursor: 'pointer',
             }}
@@ -373,14 +388,35 @@ export default function AnalyticsClient({ slug }: Props) {
       {/* Summary chips */}
       {data && (
         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
-          <StatChip label="Members" value={data.members.length} sub="in workspace" />
+          <StatChip label="Members" value={data.members.length} sub="in workspace" icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          } />
           {data.signals_configured ? (
-            <StatChip label="Office days" value={totalOfficeDays} sub="total across team" />
+            <StatChip label="Office days" value={totalOfficeDays} sub="total across team" icon={
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+              </svg>
+            } />
           ) : (
-            <StatChip label="Check-ins" value={data.members.reduce((s, m) => s + m.office_days + m.wfh_days, 0)} sub="total across team" />
+            <StatChip label="Check-ins" value={data.members.reduce((s, m) => s + m.office_days + m.wfh_days, 0)} sub="total across team" icon={
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            } />
           )}
-          <StatChip label="Hours tracked" value={fmtHours(totalHours)} sub="total logged" />
-          <StatChip label="Avg days" value={avgAttendance} sub="attended per person" />
+          <StatChip label="Hours tracked" value={fmtHours(totalHours)} sub="total logged" icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          } />
+          <StatChip label="Avg days" value={avgAttendance} sub="attended per person" icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          } />
         </div>
       )}
 
@@ -391,10 +427,10 @@ export default function AnalyticsClient({ slug }: Props) {
         </div>
       ) : !data || data.members.length === 0 ? (
         <div style={{ background: 'var(--surface-0)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '48px 24px', textAlign: 'center' }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
             No presence data for this period.
           </p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
             Members will appear here as they check in.
           </p>
         </div>
@@ -405,7 +441,7 @@ export default function AnalyticsClient({ slug }: Props) {
               padding: '10px 16px',
               background: 'color-mix(in srgb, var(--amber) 8%, transparent)',
               borderBottom: '1px solid var(--border)',
-              fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)',
+              fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)',
             }}>
               No location signals configured — all check-ins are shown. Configure GPS/WiFi signals in Settings to distinguish office vs remote days.
             </div>
@@ -437,7 +473,7 @@ export default function AnalyticsClient({ slug }: Props) {
 
       {/* Field force note */}
       {data && data.members.some((m) => m.multi_location_days > 0) && (
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginTop: '10px' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginTop: '10px' }}>
           Multi-loc: days where checkout was recorded more than 1km from check-in location (field force / site visits).
         </p>
       )}

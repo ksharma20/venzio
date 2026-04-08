@@ -31,7 +31,7 @@ export default function MarketingFooter() {
         <Link href="/" style={{ textDecoration: "none" }}>
           <span
             style={{
-              fontFamily: "Syne, sans-serif",
+              fontFamily: "Playfair Display, serif",
               fontWeight: 700,
               fontSize: "16px",
               color: "var(--brand)",
@@ -56,7 +56,7 @@ export default function MarketingFooter() {
                 fontSize: "13px",
                 color: "var(--text-muted)",
                 textDecoration: "none",
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
               }}
             >
               {l.label}
