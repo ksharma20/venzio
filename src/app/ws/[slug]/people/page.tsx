@@ -25,7 +25,7 @@ export default async function PeoplePage({ params }: Props) {
     <div style={{ maxWidth: '640px', margin: '0 auto', padding: '24px 20px' }}>
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',

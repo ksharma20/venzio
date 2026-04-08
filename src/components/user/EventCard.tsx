@@ -68,12 +68,26 @@ export default function EventCard({ event, onNoteUpdate }: EventCardProps) {
             style={{
               fontSize: '12px',
               color: 'var(--text-muted)',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
             }}
           >
             {duration}
           </span>
         )}
+
+        <span
+          style={{
+            marginLeft: 'auto',
+            fontSize: '11px',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
+            color: 'var(--brand)',
+            background: 'color-mix(in srgb, var(--brand) 10%, transparent)',
+            padding: '2px 8px',
+            borderRadius: '20px',
+          }}
+        >
+          {geoLabel}
+        </span>
       </div>
 
       {/* Note */}
@@ -97,7 +111,7 @@ export default function EventCard({ event, onNoteUpdate }: EventCardProps) {
                 border: '1px solid var(--brand)',
                 borderRadius: 'var(--radius-sm)',
                 fontSize: '13px',
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
                 background: 'var(--surface-0)',
                 outline: 'none',
               }}
@@ -114,7 +128,7 @@ export default function EventCard({ event, onNoteUpdate }: EventCardProps) {
                 borderRadius: 'var(--radius-sm)',
                 fontSize: '13px',
                 cursor: 'pointer',
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
               }}
             >
               {saving ? '…' : 'Save'}
@@ -131,7 +145,7 @@ export default function EventCard({ event, onNoteUpdate }: EventCardProps) {
               textAlign: 'left',
               width: '100%',
               fontSize: '13px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               color: noteValue ? 'var(--text-secondary)' : 'var(--text-muted)',
             }}
           >
@@ -168,7 +182,7 @@ export default function EventCard({ event, onNoteUpdate }: EventCardProps) {
             rel="noopener noreferrer"
             style={{
               fontSize: '11px',
-              fontFamily: geoLabel ? 'DM Sans, sans-serif' : 'JetBrains Mono, monospace',
+              fontFamily: geoLabel ? 'Plus Jakarta Sans, sans-serif' : 'JetBrains Mono, monospace',
               color: 'var(--brand)',
               textDecoration: 'none',
             }}

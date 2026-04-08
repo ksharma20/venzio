@@ -32,7 +32,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
     >
       <h2
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '15px',
           fontWeight: 600,
           color: 'var(--navy)',
@@ -53,7 +53,7 @@ function FieldGroup({ label, children }: { label: string; children: React.ReactN
         style={{
           display: 'block',
           fontSize: '12px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           color: 'var(--text-secondary)',
           marginBottom: '5px',
         }}
@@ -72,7 +72,7 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid var(--border)',
   borderRadius: 'var(--radius-md)',
   fontSize: '14px',
-  fontFamily: 'DM Sans, sans-serif',
+  fontFamily: 'Plus Jakarta Sans, sans-serif',
   background: 'var(--surface-2)',
   color: 'var(--text-primary)',
   outline: 'none',
@@ -99,7 +99,7 @@ function PrimaryBtn({ children, onClick, loading, small, disabled }: {
         border: 'none',
         borderRadius: 'var(--radius-md)',
         fontSize: small ? '13px' : '14px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontWeight: 500,
         cursor: (loading || disabled) ? 'not-allowed' : 'pointer',
         opacity: (loading || disabled) ? 0.7 : 1,
@@ -117,7 +117,7 @@ function StatusLine({ msg }: { msg: { text: string; ok: boolean } | null }) {
     <p
       style={{
         fontSize: '13px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         color: msg.ok ? 'var(--teal)' : 'var(--danger)',
         marginTop: '8px',
       }}
@@ -194,7 +194,7 @@ function WorkspaceSection({ slug }: { slug: string }) {
   return (
     <SectionCard title="Workspace details">
       {fetching ? (
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif', marginBottom: '14px' }}>Loading…</p>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '14px' }}>Loading…</p>
       ) : (
         <>
       <FieldGroup label="Workspace name">
@@ -220,7 +220,7 @@ function WorkspaceSection({ slug }: { slug: string }) {
       <p
         style={{
           fontSize: '12px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           color: 'var(--text-muted)',
           marginBottom: '14px',
           marginTop: '-8px',
@@ -445,7 +445,7 @@ function SignalsSection({ slug }: { slug: string }) {
     return (
       <span style={{
         fontSize: '11px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontWeight: 600,
         color: colors[type] ?? 'var(--text-muted)',
         background: 'var(--surface-2)',
@@ -469,21 +469,21 @@ function SignalsSection({ slug }: { slug: string }) {
           padding: '10px 14px',
           marginBottom: '14px',
           fontSize: '13px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           color: 'var(--teal)',
         }}>
           {toast}
         </div>
       )}
 
-      <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+      <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px' }}>
         Signals define what counts as &ldquo;in office&rdquo; for your workspace. If no signals are registered, all check-in events from your members are shown.
       </p>
 
       {loading ? (
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif' }}>Loading…</p>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>Loading…</p>
       ) : signals.length === 0 ? (
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif', marginBottom: '14px' }}>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '14px' }}>
           No signals registered yet. Add a GPS location, WiFi network, or IP context below.
         </p>
       ) : (
@@ -491,10 +491,10 @@ function SignalsSection({ slug }: { slug: string }) {
           {signals.map((s) => (
             <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>
               {typeBadge(s.signal_type)}
-              <span style={{ flex: 1, fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-primary)' }}>
+              <span style={{ flex: 1, fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-primary)' }}>
                 {signalLabel(s)}
               </span>
-              <button onClick={() => deleteSignal(s.id)} style={{ background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontFamily: 'DM Sans, sans-serif', cursor: 'pointer' }}>
+              <button onClick={() => deleteSignal(s.id)} style={{ background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', cursor: 'pointer' }}>
                 Remove
               </button>
             </div>
@@ -505,17 +505,17 @@ function SignalsSection({ slug }: { slug: string }) {
       {/* GPS form */}
       {showGpsForm ? (
         <div style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px', marginBottom: '10px' }}>
-          <p style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'Syne, sans-serif', color: 'var(--navy)', marginBottom: '12px' }}>Register GPS location</p>
+          <p style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'Playfair Display, serif', color: 'var(--navy)', marginBottom: '12px' }}>Register GPS location</p>
           <FieldGroup label="Location name">
             <input type="text" value={locationName} onChange={(e) => setLocationName(e.target.value)} placeholder="Head Office" style={{ ...inputStyle, height: '36px' }} />
           </FieldGroup>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif', marginBottom: '4px' }}>Latitude</label>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '4px' }}>Latitude</label>
               <input type="text" value={gpsLat} onChange={(e) => setGpsLat(e.target.value)} placeholder="28.6139" style={{ ...inputStyle, height: '36px' }} />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif', marginBottom: '4px' }}>Longitude</label>
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '4px' }}>Longitude</label>
               <input type="text" value={gpsLng} onChange={(e) => setGpsLng(e.target.value)} placeholder="77.2090" style={{ ...inputStyle, height: '36px' }} />
             </div>
           </div>
@@ -523,7 +523,7 @@ function SignalsSection({ slug }: { slug: string }) {
             <input type="range" min={100} max={500} step={50} value={gpsRadius} onChange={(e) => setGpsRadius(parseInt(e.target.value))} style={{ width: '100%' }} />
           </FieldGroup>
           {tzDetected && (
-            <p style={{ fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--teal)', marginBottom: '10px' }}>
+            <p style={{ fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--teal)', marginBottom: '10px' }}>
               Timezone will auto-update to {tzDetected}
             </p>
           )}
@@ -537,7 +537,7 @@ function SignalsSection({ slug }: { slug: string }) {
                 height: '36px', padding: '0 14px',
                 background: 'var(--surface-2)', color: 'var(--text-primary)',
                 border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-                fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+                fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
                 cursor: gettingGps ? 'not-allowed' : 'pointer',
                 opacity: gettingGps ? 0.7 : 1,
               }}
@@ -547,7 +547,7 @@ function SignalsSection({ slug }: { slug: string }) {
             <PrimaryBtn small onClick={saveGpsManual} loading={savingGps} disabled={!gpsLat || !gpsLng}>
               Save location
             </PrimaryBtn>
-            <button type="button" onClick={() => { setShowGpsForm(false); setGpsStatus(null) }} style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            <button type="button" onClick={() => { setShowGpsForm(false); setGpsStatus(null) }} style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}>
               Cancel
             </button>
           </div>
@@ -557,20 +557,20 @@ function SignalsSection({ slug }: { slug: string }) {
       {/* WiFi form */}
       {showWifiForm ? (
         <div style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px', marginBottom: '10px' }}>
-          <p style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'Syne, sans-serif', color: 'var(--navy)', marginBottom: '12px' }}>Register WiFi network</p>
+          <p style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'Playfair Display, serif', color: 'var(--navy)', marginBottom: '12px' }}>Register WiFi network</p>
           <FieldGroup label="Location name (optional)">
             <input type="text" value={wifiName} onChange={(e) => setWifiName(e.target.value)} placeholder="Head Office" style={{ ...inputStyle, height: '36px' }} />
           </FieldGroup>
           <FieldGroup label="WiFi SSID (network name)">
             <input type="text" value={wifiSsid} onChange={(e) => setWifiSsid(e.target.value)} placeholder="AcmeCorp-WiFi" style={{ ...inputStyle, height: '36px' }} />
           </FieldGroup>
-          <p style={{ fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-muted)', marginBottom: '10px' }}>
+          <p style={{ fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-muted)', marginBottom: '10px' }}>
             The SSID is hashed before storage and never displayed in full.
           </p>
           <StatusLine msg={wifiStatus} />
           <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
             <PrimaryBtn small onClick={saveWifi} loading={savingWifi}>Save WiFi</PrimaryBtn>
-            <button type="button" onClick={() => { setShowWifiForm(false); setWifiStatus(null) }} style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            <button type="button" onClick={() => { setShowWifiForm(false); setWifiStatus(null) }} style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}>
               Cancel
             </button>
           </div>
@@ -583,14 +583,14 @@ function SignalsSection({ slug }: { slug: string }) {
           <button
             type="button"
             onClick={() => setShowGpsForm(true)}
-            style={{ height: '36px', padding: '0 14px', background: 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', cursor: 'pointer' }}
+            style={{ height: '36px', padding: '0 14px', background: 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', cursor: 'pointer' }}
           >
             + GPS location
           </button>
           <button
             type="button"
             onClick={() => setShowWifiForm(true)}
-            style={{ height: '36px', padding: '0 14px', background: 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', cursor: 'pointer' }}
+            style={{ height: '36px', padding: '0 14px', background: 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', cursor: 'pointer' }}
           >
             + WiFi network
           </button>
@@ -598,7 +598,7 @@ function SignalsSection({ slug }: { slug: string }) {
             type="button"
             onClick={registerIp}
             disabled={registeringIp}
-            style={{ height: '36px', padding: '0 14px', background: 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', cursor: registeringIp ? 'not-allowed' : 'pointer', opacity: registeringIp ? 0.7 : 1 }}
+            style={{ height: '36px', padding: '0 14px', background: 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', cursor: registeringIp ? 'not-allowed' : 'pointer', opacity: registeringIp ? 0.7 : 1 }}
           >
             {registeringIp ? '…' : '+ IP context'}
           </button>
@@ -680,7 +680,7 @@ function DomainsSection({ slug }: { slug: string }) {
 
   return (
     <SectionCard title="Email domain verification">
-      <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+      <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '16px' }}>
         Verified domains enable auto-enrolment: employees who sign up with a matching email are automatically added as members.
       </p>
 
@@ -691,22 +691,22 @@ function DomainsSection({ slug }: { slug: string }) {
               {d.domain}
             </span>
             {d.verified_at ? (
-              <span style={{ fontSize: '11px', fontFamily: 'DM Sans, sans-serif', fontWeight: 600, color: 'var(--teal)', background: 'color-mix(in srgb, var(--teal) 12%, transparent)', border: '1px solid var(--teal)', borderRadius: '4px', padding: '2px 7px' }}>
+              <span style={{ fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, color: 'var(--teal)', background: 'color-mix(in srgb, var(--teal) 12%, transparent)', border: '1px solid var(--teal)', borderRadius: '4px', padding: '2px 7px' }}>
                 Verified
               </span>
             ) : (
-              <span style={{ fontSize: '11px', fontFamily: 'DM Sans, sans-serif', fontWeight: 600, color: 'var(--amber)', background: 'color-mix(in srgb, var(--amber) 12%, transparent)', border: '1px solid var(--amber)', borderRadius: '4px', padding: '2px 7px' }}>
+              <span style={{ fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, color: 'var(--amber)', background: 'color-mix(in srgb, var(--amber) 12%, transparent)', border: '1px solid var(--amber)', borderRadius: '4px', padding: '2px 7px' }}>
                 Unverified
               </span>
             )}
-            <button onClick={() => removeDomain(d.id)} style={{ background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', padding: '0 4px' }}>
+            <button onClick={() => removeDomain(d.id)} style={{ background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', cursor: 'pointer', padding: '0 4px' }}>
               Remove
             </button>
           </div>
 
           {!d.verified_at && d.verifyToken && (
             <div style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '12px', marginBottom: '10px' }}>
-              <p style={{ fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+              <p style={{ fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                 Add this DNS TXT record, then click &ldquo;Check verification&rdquo;:
               </p>
               {[
@@ -714,11 +714,11 @@ function DomainsSection({ slug }: { slug: string }) {
                 { label: 'Value', value: `${DNS_VERIFY_VALUE_PREFIX}=${d.verifyToken}` },
               ].map(({ label, value }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', width: '40px', flexShrink: 0 }}>{label}</span>
+                  <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', width: '40px', flexShrink: 0 }}>{label}</span>
                   <code style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--text-primary)', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: '4px', padding: '3px 6px', flex: 1, wordBreak: 'break-all' }}>
                     {value}
                   </code>
-                  <button onClick={() => copyToClipboard(value, `${d.id}-${label}`)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: '4px', padding: '3px 8px', fontSize: '11px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0 }}>
+                  <button onClick={() => copyToClipboard(value, `${d.id}-${label}`)} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: '4px', padding: '3px 8px', fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0 }}>
                     {copied === `${d.id}-${label}` ? 'Copied!' : 'Copy'}
                   </button>
                 </div>
@@ -730,7 +730,7 @@ function DomainsSection({ slug }: { slug: string }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <PrimaryBtn small onClick={() => checkVerification(d)}>Check verification</PrimaryBtn>
               {verifyStatus[d.id] && (
-                <span style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: verifyStatus[d.id].ok ? 'var(--teal)' : 'var(--text-secondary)' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: verifyStatus[d.id].ok ? 'var(--teal)' : 'var(--text-secondary)' }}>
                   {verifyStatus[d.id].text}
                 </span>
               )}
@@ -814,11 +814,11 @@ function ArchiveSection({ slug }: { slug: string }) {
     <SectionCard title={isArchived ? 'Restore workspace' : 'Archive workspace'}>
       {isArchived ? (
         <>
-          <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
             This workspace is currently archived. Restoring it will make it active again (subject to the 1 active workspace limit).
           </p>
           {error && (
-            <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
+            <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
           )}
           {!confirming ? (
             <button
@@ -828,7 +828,7 @@ function ArchiveSection({ slug }: { slug: string }) {
                 height: '44px', padding: '0 20px',
                 background: 'var(--brand)', color: '#fff',
                 border: 'none', borderRadius: 'var(--radius-md)',
-                fontSize: '14px', fontFamily: 'DM Sans, sans-serif', fontWeight: 500,
+                fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 500,
                 cursor: 'pointer',
               }}
             >
@@ -836,7 +836,7 @@ function ArchiveSection({ slug }: { slug: string }) {
             </button>
           ) : (
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-primary)', margin: 0 }}>
+              <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-primary)', margin: 0 }}>
                 Restore this workspace?
               </p>
               <button
@@ -846,7 +846,7 @@ function ArchiveSection({ slug }: { slug: string }) {
                 style={{
                   height: '36px', padding: '0 16px',
                   background: 'var(--brand)', color: '#fff', border: 'none',
-                  borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+                  borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
                   cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
                 }}
               >
@@ -855,7 +855,7 @@ function ArchiveSection({ slug }: { slug: string }) {
               <button
                 type="button"
                 onClick={() => setConfirming(false)}
-                style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -864,11 +864,11 @@ function ArchiveSection({ slug }: { slug: string }) {
         </>
       ) : (
         <>
-          <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
             Archiving hides this workspace from your active list. Members and all presence data are preserved. The workspace can be restored at any time from /ws.
           </p>
           {error && (
-            <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
+            <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
           )}
           {!confirming ? (
             <button
@@ -878,7 +878,7 @@ function ArchiveSection({ slug }: { slug: string }) {
                 height: '44px', padding: '0 20px',
                 background: 'transparent', color: 'var(--text-secondary)',
                 border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-                fontSize: '14px', fontFamily: 'DM Sans, sans-serif', fontWeight: 500,
+                fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 500,
                 cursor: 'pointer',
               }}
             >
@@ -886,7 +886,7 @@ function ArchiveSection({ slug }: { slug: string }) {
             </button>
           ) : (
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-primary)', margin: 0 }}>
+              <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-primary)', margin: 0 }}>
                 Archive this workspace?
               </p>
               <button
@@ -896,7 +896,7 @@ function ArchiveSection({ slug }: { slug: string }) {
                 style={{
                   height: '36px', padding: '0 16px',
                   background: 'var(--danger)', color: '#fff', border: 'none',
-                  borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'DM Sans, sans-serif',
+                  borderRadius: 'var(--radius-md)', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
                   cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
                 }}
               >
@@ -905,7 +905,7 @@ function ArchiveSection({ slug }: { slug: string }) {
               <button
                 type="button"
                 onClick={() => setConfirming(false)}
-                style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -930,7 +930,7 @@ function LogoutSection() {
 
   return (
     <SectionCard title="Session">
-      <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
+      <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
         Sign out of your Venzio account on this device.
       </p>
       <button
@@ -941,7 +941,7 @@ function LogoutSection() {
           height: '44px', padding: '0 20px',
           background: 'transparent', color: 'var(--text-secondary)',
           border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-          fontSize: '14px', fontFamily: 'DM Sans, sans-serif', fontWeight: 500,
+          fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 500,
           cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
         }}
       >
@@ -959,7 +959,7 @@ export default function SettingsPage() {
 
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto', padding: '24px 20px' }}>
-      <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', marginBottom: '20px' }}>
+      <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', marginBottom: '20px' }}>
         Settings
       </h1>
       <WorkspaceSection slug={slug} />

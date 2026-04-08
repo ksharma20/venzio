@@ -77,7 +77,7 @@ function BarChart({ buckets, valueKey, color, label, totalMembers }: BarChartPro
 
   return (
     <div>
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '8px' }}>
+      <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '8px' }}>
         {label}
       </p>
       <div style={{ overflowX: 'auto', paddingBottom: '4px' }}>
@@ -132,7 +132,7 @@ function BarChart({ buckets, valueKey, color, label, totalMembers }: BarChartPro
                       textAnchor="middle"
                       fill="#fff"
                       fontSize={10}
-                      fontFamily="DM Sans, sans-serif"
+                      fontFamily="Plus Jakarta Sans, sans-serif"
                     >
                       {valueKey === 'unique_users'
                         ? `${val}/${totalMembers}`
@@ -149,7 +149,7 @@ function BarChart({ buckets, valueKey, color, label, totalMembers }: BarChartPro
                     textAnchor="middle"
                     fill="var(--text-muted)"
                     fontSize={9}
-                    fontFamily="DM Sans, sans-serif"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
                   >
                     {b.label.length > 6 ? b.label.slice(0, 6) : b.label}
                   </text>
@@ -174,14 +174,14 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
       padding: '16px 18px',
       flex: '1 1 120px',
     }}>
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '6px' }}>
+      <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '6px' }}>
         {label}
       </p>
-      <p style={{ fontFamily: 'Syne, sans-serif', fontSize: '24px', fontWeight: 700, color: color ?? 'var(--navy)', lineHeight: 1 }}>
+      <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '24px', fontWeight: 700, color: color ?? 'var(--navy)', lineHeight: 1 }}>
         {value}
       </p>
       {sub && (
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)', marginTop: '3px' }}>
           {sub}
         </p>
       )}
@@ -218,10 +218,10 @@ export default function InsightsClient({ slug }: Props) {
     <div style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 20px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', margin: 0 }}>
+        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', margin: 0 }}>
           Insights
         </h1>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)' }}>
+        <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)' }}>
           Attendance patterns and trends
         </p>
       </div>
@@ -239,7 +239,7 @@ export default function InsightsClient({ slug }: Props) {
               color: interval === iv.key ? '#fff' : 'var(--text-secondary)',
               border: `1px solid ${interval === iv.key ? 'var(--brand)' : 'var(--border)'}`,
               borderRadius: 'var(--radius-md)',
-              fontSize: '13px', fontFamily: 'DM Sans, sans-serif', fontWeight: interval === iv.key ? 600 : 400,
+              fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: interval === iv.key ? 600 : 400,
               cursor: 'pointer',
               transition: 'background 0.15s, color 0.15s',
             }}
@@ -253,8 +253,8 @@ export default function InsightsClient({ slug }: Props) {
         <InsightsSkeleton />
       ) : !data || data.buckets.length === 0 ? (
         <div style={{ padding: '60px 24px', textAlign: 'center', background: 'var(--surface-0)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>No check-in data for this period.</p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>Charts will appear as your team checks in.</p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>No check-in data for this period.</p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>Charts will appear as your team checks in.</p>
         </div>
       ) : (
         <>
@@ -319,7 +319,7 @@ export default function InsightsClient({ slug }: Props) {
             {/* Attendance % by bucket */}
             {data.total_members > 0 && (
               <div style={{ background: 'var(--surface-0)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px' }}>
-                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '14px' }}>
+                <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '14px' }}>
                   Attendance rate
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -331,7 +331,7 @@ export default function InsightsClient({ slug }: Props) {
                       const pct = Math.round((b.unique_users / data.total_members) * 100)
                       return (
                         <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-secondary)', minWidth: '60px', flexShrink: 0 }}>
+                          <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-secondary)', minWidth: '60px', flexShrink: 0 }}>
                             {b.label}
                           </span>
                           <div style={{ flex: 1, height: '10px', background: 'var(--surface-2)', borderRadius: '5px', overflow: 'hidden' }}>

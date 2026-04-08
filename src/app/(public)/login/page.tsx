@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { en } from '@/locales/en'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -16,7 +17,7 @@ function Label({ children }: { children: React.ReactNode }) {
       style={{
         display: 'block',
         fontSize: '12px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         color: 'var(--text-secondary)',
         marginBottom: '5px',
       }}
@@ -61,7 +62,7 @@ function Input({
         border: `1px solid ${hasError ? 'var(--danger)' : 'var(--border)'}`,
         borderRadius: 'var(--radius-md)',
         fontSize: '15px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         background: 'var(--surface-2)',
         color: 'var(--text-primary)',
         outline: 'none',
@@ -95,7 +96,7 @@ function PrimaryBtn({
         border: 'none',
         borderRadius: 'var(--radius-md)',
         fontSize: '15px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontWeight: 600,
         cursor: loading ? 'not-allowed' : 'pointer',
         opacity: loading ? 0.7 : 1,
@@ -116,7 +117,7 @@ function BackLink({ onClick }: { onClick: () => void }) {
         border: 'none',
         color: 'var(--text-secondary)',
         fontSize: '13px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         cursor: 'pointer',
         padding: '0',
         marginBottom: '24px',
@@ -136,7 +137,7 @@ function ErrorMsg({ text }: { text: string | null }) {
     <p
       style={{
         fontSize: '13px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         color: 'var(--danger)',
         marginTop: '10px',
       }}
@@ -177,7 +178,6 @@ function EmailStep({
     const e = email.toLowerCase().trim()
     if (!e || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) {
       setEmailTouched(true)
-      setError('Please enter a valid email address')
       return
     }
     setLoading(true)
@@ -217,18 +217,29 @@ function EmailStep({
     <div>
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '26px',
           fontWeight: 700,
           color: 'var(--navy)',
           marginBottom: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
         }}
       >
-        Welcome to {en.brand.name}
+        Welcome to{' '}
+        <Image
+          src="/logo.png"
+          alt={en.brand.name}
+          width={130}
+          height={38}
+          style={{ objectFit: 'contain', verticalAlign: 'middle' }}
+          priority
+        />
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '14px',
           color: 'var(--text-secondary)',
           marginBottom: '28px',
@@ -248,7 +259,7 @@ function EmailStep({
           hasError={emailInvalid}
         />
         {emailInvalid && (
-          <p style={{ fontSize: '12px', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)', marginTop: '4px' }}>
+          <p style={{ fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--danger)', marginTop: '4px' }}>
             Please enter a valid email address.
           </p>
         )}
@@ -307,7 +318,7 @@ function PasswordStep({
       <BackLink onClick={onBack} />
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -318,7 +329,7 @@ function PasswordStep({
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '13px',
           color: 'var(--text-secondary)',
           marginBottom: '24px',
@@ -330,16 +341,17 @@ function PasswordStep({
         <Input
           type="password"
           value={password}
-          onChange={setPassword}
+          onChange={(v) => { setPassword(v); if (error) setError(null) }}
           placeholder="Your password"
           autoFocus
           onKeyDown={(e) => e.key === 'Enter' && signIn()}
+          hasError={!!error}
         />
+        <ErrorMsg text={error} />
       </FieldGroup>
       <PrimaryBtn onClick={signIn} loading={loading}>
         Sign in
       </PrimaryBtn>
-      <ErrorMsg text={error} />
     </div>
   )
 }
@@ -385,10 +397,10 @@ function DeactivatedStep({
   return (
     <div>
       <BackLink onClick={onBack} />
-      <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', marginBottom: '4px' }}>
+      <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', marginBottom: '4px' }}>
         Account deactivated
       </h1>
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
+      <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
         {email}
       </p>
       <div style={{
@@ -398,7 +410,7 @@ function DeactivatedStep({
         padding: '12px 14px',
         marginBottom: '20px',
         fontSize: '13px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         color: 'var(--text-secondary)',
         lineHeight: 1.5,
       }}>
@@ -408,16 +420,17 @@ function DeactivatedStep({
         <Input
           type="password"
           value={password}
-          onChange={setPassword}
+          onChange={(v) => { setPassword(v); if (error) setError(null) }}
           placeholder="Your password"
           autoFocus
           onKeyDown={(e) => e.key === 'Enter' && reactivate()}
+          hasError={!!error}
         />
+        <ErrorMsg text={error} />
       </FieldGroup>
       <PrimaryBtn onClick={reactivate} loading={loading}>
         Reactivate account
       </PrimaryBtn>
-      <ErrorMsg text={error} />
     </div>
   )
 }
@@ -492,7 +505,7 @@ function OtpStep({
       <BackLink onClick={onBack} />
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -503,7 +516,7 @@ function OtpStep({
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '13px',
           color: 'var(--text-secondary)',
           marginBottom: '24px',
@@ -515,22 +528,23 @@ function OtpStep({
         <Input
           type="text"
           value={code}
-          onChange={(v) => setCode(v.replace(/\D/g, '').slice(0, 6))}
+          onChange={(v) => { setCode(v.replace(/\D/g, '').slice(0, 6)); if (error) setError(null) }}
           placeholder="123456"
           autoFocus
           onKeyDown={(e) => e.key === 'Enter' && verify()}
+          hasError={!!error}
         />
+        <ErrorMsg text={error} />
       </FieldGroup>
       <PrimaryBtn onClick={verify} loading={loading}>
         Verify
       </PrimaryBtn>
-      <ErrorMsg text={error} />
       {resendMsg && (
         <p
           style={{
             fontSize: '13px',
             color: 'var(--teal)',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
             marginTop: '10px',
           }}
         >
@@ -546,7 +560,7 @@ function OtpStep({
           border: 'none',
           color: 'var(--text-secondary)',
           fontSize: '13px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           cursor: 'pointer',
           padding: '0',
           marginTop: '14px',
@@ -572,7 +586,7 @@ function AccountTypeStep({
     <div>
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -583,7 +597,7 @@ function AccountTypeStep({
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '14px',
           color: 'var(--text-secondary)',
           marginBottom: '28px',
@@ -637,7 +651,7 @@ function AccountTypeCard({
     >
       <p
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '15px',
           fontWeight: 600,
           color: 'var(--navy)',
@@ -648,7 +662,7 @@ function AccountTypeCard({
       </p>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '13px',
           color: 'var(--text-secondary)',
         }}
@@ -711,7 +725,7 @@ function PersonalSetupStep({
       <BackLink onClick={onBack} />
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -722,7 +736,7 @@ function PersonalSetupStep({
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '13px',
           color: 'var(--text-secondary)',
           marginBottom: '24px',
@@ -812,7 +826,7 @@ function SlugHint({ status }: { status: SlugStatus }) {
     <p
       style={{
         fontSize: '12px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         color: hint.color,
         marginTop: '5px',
       }}
@@ -897,7 +911,7 @@ function OrgSetupStep({
       <BackLink onClick={onBack} />
       <h1
         style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontSize: '22px',
           fontWeight: 700,
           color: 'var(--navy)',
@@ -908,7 +922,7 @@ function OrgSetupStep({
       </h1>
       <p
         style={{
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           fontSize: '13px',
           color: 'var(--text-secondary)',
           marginBottom: '24px',
@@ -921,7 +935,7 @@ function OrgSetupStep({
       <p
         style={{
           fontSize: '11px',
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontWeight: 600,
           color: 'var(--text-secondary)',
           textTransform: 'uppercase',
@@ -953,7 +967,7 @@ function OrgSetupStep({
             style={{
               padding: '0 10px',
               fontSize: '13px',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
               color: 'var(--text-secondary)',
               borderRight: '1px solid var(--border)',
               height: '100%',
@@ -996,7 +1010,7 @@ function OrgSetupStep({
       <p
         style={{
           fontSize: '12px',
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
           color: 'var(--text-muted)',
           marginTop: '-10px',
           marginBottom: '20px',
@@ -1012,7 +1026,7 @@ function OrgSetupStep({
       <p
         style={{
           fontSize: '11px',
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: 'Playfair Display, serif',
           fontWeight: 600,
           color: 'var(--text-secondary)',
           textTransform: 'uppercase',
@@ -1077,16 +1091,43 @@ function LoginFlow() {
         justifyContent: 'center',
         background: 'var(--surface-1)',
         padding: '24px 16px',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Subtle radial glow — matches landing page */}
+      <div style={{
+        pointerEvents: 'none',
+        position: 'absolute',
+        left: '50%',
+        top: '-10%',
+        width: '700px',
+        height: '500px',
+        transform: 'translateX(-50%)',
+        background: 'radial-gradient(ellipse at center, rgba(29,158,117,0.09) 0%, transparent 70%)',
+        zIndex: 0,
+      }} />
+      {/* Grid pattern — matches landing page */}
+      <div style={{
+        pointerEvents: 'none',
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: 'linear-gradient(rgba(29,158,117,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(29,158,117,0.04) 1px, transparent 1px)',
+        backgroundSize: '60px 60px',
+        maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)',
+        zIndex: 0,
+      }} />
       <div
         style={{
+          position: 'relative',
+          zIndex: 1,
           width: '100%',
           maxWidth: '420px',
           background: 'var(--surface-0)',
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)',
           padding: '32px 28px',
+          boxShadow: '0 0 40px rgba(29,158,117,0.08)',
         }}
       >
         {step === 'email' && (

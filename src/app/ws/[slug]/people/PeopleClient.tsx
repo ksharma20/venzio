@@ -22,7 +22,7 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid var(--border)',
   borderRadius: 'var(--radius-md)',
   fontSize: '14px',
-  fontFamily: 'DM Sans, sans-serif',
+  fontFamily: 'Plus Jakarta Sans, sans-serif',
   background: 'var(--surface-2)',
   color: 'var(--text-primary)',
   outline: 'none',
@@ -56,7 +56,7 @@ function statusBadge(status: string) {
     <span
       style={{
         fontSize: '11px',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontWeight: 600,
         borderRadius: '4px',
         padding: '2px 7px',
@@ -146,23 +146,23 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
         maxWidth: '420px',
         width: '100%',
       }}>
-        <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '18px', fontWeight: 700, color: 'var(--navy)', marginBottom: '8px' }}>
+        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '18px', fontWeight: 700, color: 'var(--navy)', marginBottom: '8px' }}>
           Transfer ownership
         </h2>
 
         {success ? (
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--teal)', lineHeight: 1.5 }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--teal)', lineHeight: 1.5 }}>
             {success}
           </p>
         ) : step === 'confirm' ? (
           <>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
               You are about to transfer admin ownership of this workspace to{' '}
               <strong style={{ color: 'var(--text-primary)' }}>{target.full_name ?? target.email}</strong>.
               You will become a regular member. This action requires verification.
             </p>
             {error && (
-              <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
+              <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
             )}
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
@@ -173,7 +173,7 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
                   flex: 1, height: '44px',
                   background: 'var(--danger)', color: '#fff', border: 'none',
                   borderRadius: 'var(--radius-md)', fontSize: '14px',
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 500,
+                  fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 500,
                   cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
                 }}
               >
@@ -186,7 +186,7 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
                   height: '44px', padding: '0 16px',
                   background: 'transparent', color: 'var(--text-secondary)',
                   border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-                  fontSize: '14px', fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif',
                   cursor: 'pointer',
                 }}
               >
@@ -196,7 +196,7 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
           </>
         ) : (
           <>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
               Enter the 6-digit code sent to <strong style={{ color: 'var(--text-primary)' }}>{adminEmail}</strong> to confirm the transfer.
             </p>
             <input
@@ -210,7 +210,7 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
               autoFocus
             />
             {error && (
-              <p style={{ fontSize: '13px', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
+              <p style={{ fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--danger)', marginBottom: '12px' }}>{error}</p>
             )}
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
@@ -221,7 +221,7 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
                   flex: 1, height: '44px',
                   background: 'var(--danger)', color: '#fff', border: 'none',
                   borderRadius: 'var(--radius-md)', fontSize: '14px',
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 500,
+                  fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 500,
                   cursor: (loading || code.length < 6) ? 'not-allowed' : 'pointer',
                   opacity: (loading || code.length < 6) ? 0.7 : 1,
                 }}
@@ -235,7 +235,7 @@ function TransferOwnershipModal({ slug, target, onDone, onCancel }: TransferModa
                   height: '44px', padding: '0 16px',
                   background: 'transparent', color: 'var(--text-secondary)',
                   border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
-                  fontSize: '14px', fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '14px', fontFamily: 'Plus Jakarta Sans, sans-serif',
                   cursor: 'pointer',
                 }}
               >
@@ -366,7 +366,7 @@ export default function PeopleClient({ slug }: Props) {
       >
         <h2
           style={{
-            fontFamily: "Syne, sans-serif",
+            fontFamily: "Playfair Display, serif",
             fontSize: "15px",
             fontWeight: 600,
             color: "var(--navy)",
@@ -377,7 +377,7 @@ export default function PeopleClient({ slug }: Props) {
         </h2>
         <p
           style={{
-            fontFamily: "DM Sans, sans-serif",
+            fontFamily: "Plus Jakarta Sans, sans-serif",
             fontSize: "13px",
             color: "var(--text-secondary)",
             marginBottom: "12px",
@@ -407,7 +407,7 @@ export default function PeopleClient({ slug }: Props) {
               border: "none",
               borderRadius: "var(--radius-md)",
               fontSize: "14px",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               fontWeight: 500,
               cursor: inviting ? "not-allowed" : "pointer",
               opacity: inviting ? 0.7 : 1,
@@ -422,7 +422,7 @@ export default function PeopleClient({ slug }: Props) {
             style={{
               marginTop: "8px",
               fontSize: "13px",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
               color: inviteStatus.ok ? "var(--teal)" : "var(--danger)",
             }}
           >
@@ -448,7 +448,7 @@ export default function PeopleClient({ slug }: Props) {
         >
           <h2
             style={{
-              fontFamily: "Syne, sans-serif",
+              fontFamily: "Playfair Display, serif",
               fontSize: "15px",
               fontWeight: 600,
               color: "var(--navy)",
@@ -460,10 +460,10 @@ export default function PeopleClient({ slug }: Props) {
 
         {members.length === 0 ? (
           <div style={{ padding: '40px 24px', textAlign: 'center' }}>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
               No members yet.
             </p>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
               Use the invite form above to add your team.
             </p>
           </div>
@@ -492,7 +492,7 @@ export default function PeopleClient({ slug }: Props) {
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: "14px",
-                  fontFamily: "DM Sans, sans-serif",
+                  fontFamily: "Plus Jakarta Sans, sans-serif",
                   fontWeight: 600,
                   color: "var(--brand)",
                   flexShrink: 0,
@@ -505,7 +505,7 @@ export default function PeopleClient({ slug }: Props) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontFamily: "DM Sans, sans-serif",
+                    fontFamily: "Plus Jakarta Sans, sans-serif",
                     fontSize: "14px",
                     fontWeight: 500,
                     color: "var(--text-primary)",
@@ -519,7 +519,7 @@ export default function PeopleClient({ slug }: Props) {
                 {m.full_name && (
                   <div
                     style={{
-                      fontFamily: "DM Sans, sans-serif",
+                      fontFamily: "Plus Jakarta Sans, sans-serif",
                       fontSize: "12px",
                       color: "var(--text-muted)",
                       whiteSpace: "nowrap",
@@ -536,7 +536,7 @@ export default function PeopleClient({ slug }: Props) {
               <span
                 style={{
                   fontSize: "12px",
-                  fontFamily: "DM Sans, sans-serif",
+                  fontFamily: "Plus Jakarta Sans, sans-serif",
                   color: "var(--text-muted)",
                   flexShrink: 0,
                 }}
@@ -559,7 +559,7 @@ export default function PeopleClient({ slug }: Props) {
                       borderRadius: "var(--radius-sm)",
                       color: "var(--text-secondary)",
                       fontSize: "11px",
-                      fontFamily: "DM Sans, sans-serif",
+                      fontFamily: "Plus Jakarta Sans, sans-serif",
                       cursor: "pointer",
                       padding: "3px 8px",
                     }}
@@ -578,7 +578,7 @@ export default function PeopleClient({ slug }: Props) {
                       border: "none",
                       color: "var(--danger)",
                       fontSize: "12px",
-                      fontFamily: "DM Sans, sans-serif",
+                      fontFamily: "Plus Jakarta Sans, sans-serif",
                       cursor:
                         removingId === m.member_id ? "not-allowed" : "pointer",
                       padding: "0 4px",

@@ -17,7 +17,7 @@ export default async function MonthlyPage({ params }: Props) {
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 20px' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
         <h1 style={{
-          fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700,
+          fontFamily: 'Playfair Display, serif', fontSize: '22px', fontWeight: 700,
           color: 'var(--navy)', margin: 0,
         }}>
           Monthly
@@ -47,11 +47,11 @@ export default async function MonthlyPage({ params }: Props) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
           flexWrap: 'wrap',
         }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
+          <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
             CSV export is available on Starter and Growth plans.
           </p>
           <Link href="/pricing" style={{
-            fontFamily: 'DM Sans, sans-serif', fontSize: '13px', fontWeight: 600,
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 600,
             color: 'var(--brand)', textDecoration: 'none',
           }}>
             View pricing →

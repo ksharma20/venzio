@@ -74,7 +74,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
         <section style={{ marginBottom: '28px' }}>
           <h2
             style={{
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'Playfair Display, serif',
               fontSize: '14px',
               fontWeight: 600,
               color: 'var(--amber)',
@@ -100,7 +100,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
               >
                 <p
                   style={{
-                    fontFamily: 'DM Sans, sans-serif',
+                    fontFamily: 'Plus Jakarta Sans, sans-serif',
                     fontWeight: 500,
                     fontSize: '14px',
                     color: 'var(--text-primary)',
@@ -111,7 +111,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
                 </p>
                 <p
                   style={{
-                    fontFamily: 'DM Sans, sans-serif',
+                    fontFamily: 'Plus Jakarta Sans, sans-serif',
                     fontSize: '12px',
                     color: 'var(--text-secondary)',
                     marginBottom: '12px',
@@ -131,7 +131,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
                       border: 'none',
                       borderRadius: 'var(--radius-sm)',
                       fontSize: '13px',
-                      fontFamily: 'DM Sans, sans-serif',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
                       fontWeight: 600,
                       cursor: 'pointer',
                     }}
@@ -149,7 +149,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
                       border: '1px solid var(--border)',
                       borderRadius: 'var(--radius-sm)',
                       fontSize: '13px',
-                      fontFamily: 'DM Sans, sans-serif',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
                       cursor: 'pointer',
                     }}
                   >
@@ -167,7 +167,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
         <section>
           <h2
             style={{
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'Playfair Display, serif',
               fontSize: '14px',
               fontWeight: 600,
               color: 'var(--text-secondary)',
@@ -196,17 +196,24 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
                 <div style={{ flex: 1 }}>
                   <Link
                     href={`/me/ws/${ws?.slug ?? m.workspace_id}`}
-                    style={{ textDecoration: 'none' }}
+                    style={{ textDecoration: 'none' }}>
+                  <p
+                    style={{
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      color: 'var(--text-primary)',
+                      marginBottom: '2px',
+                    }}
                   >
-                    <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 500, fontSize: '14px', color: 'var(--text-primary)', marginBottom: '2px' }}>
-                      {ws?.name ?? m.workspace_id}
-                    </p>
+                    {ws?.name ?? m.workspace_id}
+                  </p>
                   </Link>
-                  <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', textTransform: 'capitalize', marginBottom: counts[m.workspace_id] ? '4px' : '0' }}>
+                  <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', textTransform: 'capitalize', marginBottom: counts[m.workspace_id] ? '4px' : '0' }}>
                     {m.role}
                   </p>
                   {counts[m.workspace_id] && (
-                    <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                    <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-secondary)' }}>
                       <span style={{ color: 'var(--teal)', fontWeight: 500 }}>{counts[m.workspace_id].present} in office</span>
                       {' · '}
                       <span>{counts[m.workspace_id].visited} visited</span>
@@ -224,7 +231,7 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
                       border: 'none',
                       color: 'var(--danger)',
                       fontSize: '12px',
-                      fontFamily: 'DM Sans, sans-serif',
+                      fontFamily: 'Plus Jakarta Sans, sans-serif',
                       cursor: 'pointer',
                       padding: '4px 0',
                     }}
@@ -239,16 +246,16 @@ export default function OrgsClient({ activeMemberships, pendingMemberships, wsMa
       ) : (
         pendingList.length === 0 && (
           <div style={{ textAlign: 'center', padding: '48px 20px' }}>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
               You&apos;re not part of any workspace yet.
             </p>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
               Your employer needs to add you, or you&apos;ll be auto-enrolled if your email domain matches.
             </p>
             <Link
               href="/ws"
               style={{
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Plus Jakarta Sans, sans-serif',
                 fontSize: '13px',
                 color: 'var(--brand)',
                 textDecoration: 'none',

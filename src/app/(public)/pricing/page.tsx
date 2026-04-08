@@ -85,14 +85,14 @@ export default function PricingPage() {
         display: 'flex', alignItems: 'center', height: '56px',
       }}>
         <Link href="/" style={{
-          fontFamily: 'Syne, sans-serif', fontWeight: 700,
+          fontFamily: 'Playfair Display, serif', fontWeight: 700,
           fontSize: '18px', color: 'var(--brand)', textDecoration: 'none',
         }}>
           {en.brand.name}
         </Link>
         <nav style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
           <Link href="/login" style={{
-            fontFamily: 'DM Sans, sans-serif', fontSize: '14px',
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px',
             color: 'var(--text-secondary)', textDecoration: 'none',
             padding: '6px 14px', border: '1px solid var(--border)',
             borderRadius: 'var(--radius-sm)',
@@ -106,13 +106,13 @@ export default function PricingPage() {
         {/* Hero */}
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <h1 style={{
-            fontFamily: 'Syne, sans-serif', fontSize: '40px', fontWeight: 800,
+            fontFamily: 'Playfair Display, serif', fontSize: '40px', fontWeight: 800,
             color: 'var(--navy)', margin: '0 0 12px',
           }}>
             Simple, transparent pricing
           </h1>
           <p style={{
-            fontFamily: 'DM Sans, sans-serif', fontSize: '17px',
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '17px',
             color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto',
           }}>
             Free for users. Affordable for organisations. No per-seat surprises on the free plan.
@@ -142,7 +142,7 @@ export default function PricingPage() {
                 <div style={{
                   position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
                   background: 'var(--teal)', color: '#fff',
-                  fontFamily: 'DM Sans, sans-serif', fontSize: '11px', fontWeight: 700,
+                  fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 700,
                   textTransform: 'uppercase', letterSpacing: '0.08em',
                   padding: '4px 12px', borderRadius: '20px',
                 }}>
@@ -151,13 +151,13 @@ export default function PricingPage() {
               )}
 
               <p style={{
-                fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '18px',
+                fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '18px',
                 color: plan.highlight ? '#fff' : 'var(--navy)', margin: '0 0 4px',
               }}>
                 {plan.name}
               </p>
               <p style={{
-                fontFamily: 'DM Sans, sans-serif', fontSize: '13px',
+                fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px',
                 color: plan.highlight ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)',
                 margin: '0 0 20px',
               }}>
@@ -166,13 +166,13 @@ export default function PricingPage() {
 
               <div style={{ marginBottom: '24px' }}>
                 <span style={{
-                  fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '36px',
+                  fontFamily: 'Playfair Display, serif', fontWeight: 800, fontSize: '36px',
                   color: plan.highlight ? '#fff' : 'var(--navy)',
                 }}>
                   {plan.price}
                 </span>
                 <span style={{
-                  fontFamily: 'DM Sans, sans-serif', fontSize: '13px',
+                  fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px',
                   color: plan.highlight ? 'rgba(255,255,255,0.65)' : 'var(--text-muted)',
                   marginLeft: '6px',
                 }}>
@@ -185,7 +185,7 @@ export default function PricingPage() {
                 style={{
                   display: 'block', textAlign: 'center',
                   padding: '10px 0', borderRadius: 'var(--radius-md)',
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '14px',
+                  fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, fontSize: '14px',
                   textDecoration: 'none',
                   background: plan.highlight ? '#fff' : 'var(--brand)',
                   color: plan.highlight ? 'var(--brand)' : '#fff',
@@ -199,7 +199,7 @@ export default function PricingPage() {
                 {plan.features.map((f) => (
                   <li key={f} style={{
                     display: 'flex', alignItems: 'flex-start', gap: '8px',
-                    fontFamily: 'DM Sans, sans-serif', fontSize: '14px',
+                    fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px',
                     color: plan.highlight ? 'rgba(255,255,255,0.9)' : 'var(--text-primary)',
                   }}>
                     <span style={{ color: plan.highlight ? 'rgba(255,255,255,0.7)' : 'var(--teal)', flexShrink: 0, marginTop: '1px' }}>✓</span>
@@ -209,7 +209,7 @@ export default function PricingPage() {
                 {plan.missing.map((f) => (
                   <li key={f} style={{
                     display: 'flex', alignItems: 'flex-start', gap: '8px',
-                    fontFamily: 'DM Sans, sans-serif', fontSize: '14px',
+                    fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px',
                     color: plan.highlight ? 'rgba(255,255,255,0.4)' : 'var(--text-muted)',
                   }}>
                     <span style={{ flexShrink: 0, marginTop: '1px' }}>–</span>
@@ -223,7 +223,7 @@ export default function PricingPage() {
 
         {/* Footer note */}
         <p style={{
-          fontFamily: 'DM Sans, sans-serif', fontSize: '13px',
+          fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px',
           color: 'var(--text-muted)', textAlign: 'center', marginTop: '40px',
         }}>
           All plans include end-to-end employee data ownership. Users always control their own presence data.

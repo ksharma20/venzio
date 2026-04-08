@@ -35,7 +35,7 @@ export default function MarketingNav() {
         <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
             style={{
-              fontFamily: "Syne, sans-serif",
+              fontFamily: "Playfair Display, serif",
               fontWeight: 700,
               fontSize: "18px",
               color: "var(--brand)",
@@ -65,7 +65,7 @@ export default function MarketingNav() {
                 color: "var(--text-secondary)",
                 textDecoration: "none",
                 borderRadius: "var(--radius-sm)",
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 transition: "color 0.15s",
               }}
             >
@@ -93,7 +93,7 @@ export default function MarketingNav() {
               fontSize: "14px",
               color: "var(--text-primary)",
               textDecoration: "none",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
             }}
           >
             Sign in
@@ -111,7 +111,7 @@ export default function MarketingNav() {
               fontSize: "14px",
               fontWeight: 600,
               textDecoration: "none",
-              fontFamily: "DM Sans, sans-serif",
+              fontFamily: "Plus Jakarta Sans, sans-serif",
             }}
           >
             Get started
