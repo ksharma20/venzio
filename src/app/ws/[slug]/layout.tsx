@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import PageTransition from "@/components/PageTransition";
-import NavTabs from "@/components/ws/NavTabs";
+import WsSidebar from "@/components/ws/WsSidebar";
 
 import { en } from "@/locales/en";
 import { getServerUser } from "@/lib/auth";
@@ -34,114 +33,24 @@ export default async function WsSlugLayout({ children, params }: Props) {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100dvh",
-        background: "var(--surface-1)",
-      }}
-    >
+    <div style={{ display: "flex", height: "100dvh", overflow: "hidden", background: "var(--surface-1)" }}>
       {/* PWA meta tags */}
       <link rel="manifest" href="/manifest-ws.json" />
-      <meta name="theme-color" content="#ffffff" />
+      <meta name="theme-color" content="#0d2118" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      <meta
-        name="apple-mobile-web-app-title"
-        content={`${en.brand.shortName} WS`}
-      />
+      <meta name="apple-mobile-web-app-title" content={`${en.brand.shortName} WS`} />
 
-      {/* Sticky header */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          boxShadow: "0 1px 0 rgba(29,158,117,0.15)",
-        }}
-      >
-        {/* Brand / workspace row — dark green */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            height: "52px",
-            padding: "0 16px",
-            gap: "8px",
-            background: "var(--header-bg)",
-          }}
-        >
-          <img
-            src="/logo.png"
-            alt="Venzio"
-            style={{ height: "45px", width: "auto", flexShrink: 0 }}
-          />
+      {/* Sidebar — fixed height, no scroll */}
+      <WsSidebar slug={slug} />
 
-          <span style={{ color: "rgba(29,158,117,0.4)", fontSize: "16px", flexShrink: 0 }}>|</span>
+      {/* Main content — scrolls independently */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, height: "100dvh", overflowY: "auto", overflowX: "hidden" }}>
+        <main style={{ flex: 1 }}>
+          <PageTransition>{children}</PageTransition>
+        </main>
+      </div>
 
-          <span
-            style={{
-              fontFamily: "Playfair Display, serif",
-              fontWeight: 600,
-              fontSize: "14px",
-              color: "#e8f5ef",
-              flex: 1,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {workspace.name}
-          </span>
-
-          <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
-            <Link
-              href="/ws"
-              style={{
-                fontFamily: "Plus Jakarta Sans, sans-serif",
-                fontSize: "12px",
-                color: "rgba(232,245,239,0.65)",
-                textDecoration: "none",
-                height: "28px",
-                padding: "0 10px",
-                border: "1px solid rgba(29,158,117,0.35)",
-                borderRadius: "var(--radius-sm)",
-                display: "flex",
-                alignItems: "center",
-                whiteSpace: "nowrap",
-              }}
-            >
-              ⊞ Workspaces
-            </Link>
-            <Link
-              href="/me"
-              style={{
-                fontFamily: "Plus Jakarta Sans, sans-serif",
-                fontSize: "12px",
-                color: "rgba(232,245,239,0.65)",
-                textDecoration: "none",
-                height: "28px",
-                padding: "0 10px",
-                border: "1px solid rgba(29,158,117,0.35)",
-                borderRadius: "var(--radius-sm)",
-                display: "flex",
-                alignItems: "center",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Me →
-            </Link>
-          </div>
-        </div>
-
-        {/* Nav tabs row — white background for contrast */}
-        <div style={{ background: "var(--surface-0)", borderBottom: "1px solid var(--border)" }}>
-          <NavTabs slug={slug} />
-        </div>
-      </header>
-
-      <main style={{ flex: 1 }}><PageTransition>{children}</PageTransition></main>
       <PwaInstallPrompt />
     </div>
   );

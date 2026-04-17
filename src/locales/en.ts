@@ -1,6 +1,5 @@
-// Single source of truth for all brand strings and user-facing copy.
-// To rename the product: change `brand` below — every string that embeds
-// the brand name is built from it, so it updates everywhere automatically.
+// Single source of truth for all brand strings, user-facing copy, and
+// technical identifiers. To rename the product: change `brand` below.
 
 const brand = 'Venzio'
 
@@ -76,6 +75,29 @@ export const en = {
       revoke: `Your data always belongs to you. You can revoke access at any time from your ${brand} profile.`,
       footer: `${brand} is a presence intelligence platform that lets employees own their work history.`,
     },
+  },
+
+  constants: {
+    // ── Auth cookies ──────────────────────────────────────────────────────────
+    cookieSession:        'vnz_session',
+    cookieOtp:            'vnz_otp_ok',
+
+    // ── Domain verification ───────────────────────────────────────────────────
+    // DNS TXT: _venzio-verify.{domain}  IN TXT  "venzio-verify={token}"
+    dnsVerifySubdomain:   '_venzio-verify',
+    dnsVerifyValuePrefix: 'venzio-verify',
+
+    // ── Database ──────────────────────────────────────────────────────────────
+    dbFile:               'venzio.db',
+
+    // ── HTTP ──────────────────────────────────────────────────────────────────
+    geoUserAgent:         'Venzio/1.0 (presence-platform)',
+
+    // ── Browser storage / notification tags (CheckinButtons) ─────────────────
+    staleNotifKey:        'vnz_stale_notif_count',
+    staleNotifEventKey:   'vnz_stale_notif_event',
+    notifTagStale:        'vnz-stale-checkin',
+    notifTagAutoCheckout: 'vnz-auto-checkout',
   },
 
   notifications: {
