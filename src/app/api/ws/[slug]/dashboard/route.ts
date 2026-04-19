@@ -35,6 +35,7 @@ export interface DashboardResponse {
   limit: number
   counts: { present: number; visited: number; notIn: number; total: number; office: number; remote: number }
   location_counts: { label: string; count: number }[]
+  workspace_name: string
 }
 
 function nextDayStr(dateStr: string): string {
@@ -195,5 +196,5 @@ export async function GET(
   const offset = (page - 1) * limit
   const paged = filtered.slice(offset, offset + limit)
 
-  return NextResponse.json({ members: paged, all_members: allMembers, total, page, limit, counts, location_counts } satisfies DashboardResponse)
+  return NextResponse.json({ members: paged, all_members: allMembers, total, page, limit, counts, location_counts, workspace_name: workspace.name } satisfies DashboardResponse)
 }

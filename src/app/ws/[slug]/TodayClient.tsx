@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import type { DashboardMember, DashboardResponse } from '@/app/api/ws/[slug]/dashboard/route'
 import type { InsightsResponse, InsightBucket } from '@/app/api/ws/[slug]/insights/route'
@@ -15,8 +15,6 @@ interface Props {
   planLimitBanner?: React.ReactNode
 }
 
-type SignalFilter = 'all' | MatchedBy
-type SortBy = 'time' | 'name' | 'duration'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -197,39 +195,6 @@ function PersonRow({ member, slug }: { member: DashboardMember; tz?: string; slu
   )
 }
 
-function NotInRow({ member, slug }: { member: DashboardMember; slug: string }) {
-  const displayName = member.full_name ?? member.email
-  return (
-    <Link
-      href={`/ws/${slug}/members/${member.user_id}`}
-      style={{
-        display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 14px',
-        background: 'var(--surface-0)', border: '1px solid var(--border)',
-        borderLeft: '3px solid var(--border)',
-        borderRadius: 'var(--radius-md)', marginBottom: '6px', opacity: 0.65,
-        textDecoration: 'none',
-      }}
-    >
-      <Avatar name={displayName} status="notIn" />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 500,
-          color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        }}>
-          {displayName}
-        </div>
-        {member.full_name && (
-          <div style={{
-            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)',
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>
-            {member.email}
-          </div>
-        )}
-      </div>
-    </Link>
-  )
-}
 
 // ─── Section label (from incoming branch) ─────────────────────────────────────
 
@@ -247,44 +212,6 @@ function SectionLabel({ children, color }: { children: React.ReactNode; color?: 
   )
 }
 
-// ─── Filter bar components (from incoming branch) ─────────────────────────────
-
-function TabPill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button type="button" onClick={onClick} style={{
-      height: '34px', padding: '0 14px',
-      border: active ? '1px solid var(--brand)' : '1px solid var(--border)',
-      borderRadius: '20px',
-      background: active ? 'var(--brand)' : 'transparent',
-      color: active ? '#fff' : 'var(--text-secondary)',
-      boxShadow: active ? '0 2px 8px color-mix(in srgb, var(--brand) 35%, transparent)' : 'none',
-      fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: active ? 600 : 400,
-      cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s',
-    }}>
-      {children}
-    </button>
-  )
-}
-
-function SignalPill({ value, active, onClick }: { value: SignalFilter; active: boolean; onClick: () => void }) {
-  const colors: Record<SignalFilter, string> = {
-    all: 'var(--text-secondary)', wifi: 'var(--teal)', gps: 'var(--brand)',
-    ip: 'var(--amber)', override: '#8B5CF6', none: 'var(--text-muted)',
-  }
-  const color = colors[value]
-  const bg = active ? `color-mix(in srgb, ${color} 12%, transparent)` : 'transparent'
-  return (
-    <button type="button" onClick={onClick} style={{
-      height: '28px', padding: '0 10px',
-      border: active ? `1px solid ${color}` : '1px solid var(--border)',
-      borderRadius: '4px', background: bg, color,
-      fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: active ? 600 : 400,
-      cursor: 'pointer', whiteSpace: 'nowrap',
-    }}>
-      {value === 'all' ? 'All signals' : value.toUpperCase()}
-    </button>
-  )
-}
 
 // ─── Stat Card (HEAD: full version with title/sub/accent/critical/onClick) ────
 
@@ -729,6 +656,7 @@ function RealtimeWidget({ data, loading, activeCount, locationCounts }: {
       borderRadius: 'var(--radius-md)',
       padding: '18px 20px',
       display: 'flex', flexDirection: 'column', gap: '16px',
+      height: '100%', boxSizing: 'border-box',
     }}>
       <div>
         <div style={{
@@ -934,15 +862,6 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
   const [statsData, setStatsData] = useState<MemberStatsResponse | null>(null)
   const [statsLoading, setStatsLoading] = useState(true)
 
-  // Filter state from incoming branch
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'present' | 'visited' | 'notIn'>('all')
-  const [signalFilter, setSignalFilter] = useState<SignalFilter>('all')
-  const [sortBy, setSortBy] = useState<SortBy>('time')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [page, setPage] = useState(1)
-  const PAGE_SIZE = 25
 
   const fetchDash = useCallback(async () => {
     setDashLoading(true)
@@ -998,44 +917,28 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
 
   const counts = data?.counts ?? { present: 0, visited: 0, notIn: 0, total: 0, office: 0, remote: 0 }
 
-  // Client-side filtering of all_members (no extra API calls)
-  const filtered = useMemo(() => {
-    let list = data?.all_members ?? []
-    if (statusFilter !== 'all') list = list.filter(m => m.presence_status === statusFilter)
-    if (signalFilter !== 'all') list = list.filter(m => m.latest_event?.matched_by === signalFilter)
-    if (search.trim()) {
-      const q = search.trim().toLowerCase()
-      list = list.filter(m => (m.full_name ?? '').toLowerCase().includes(q) || m.email.toLowerCase().includes(q))
-    }
-    return [...list].sort((a, b) => {
-      let cmp = 0
-      if (sortBy === 'name') {
-        cmp = (a.full_name ?? a.email).localeCompare(b.full_name ?? b.email)
-      } else if (sortBy === 'time') {
-        cmp = (a.latest_event?.checkin_at ?? '').localeCompare(b.latest_event?.checkin_at ?? '')
-      } else {
-        const durA = a.latest_event ? new Date(a.latest_event.checkout_at ?? Date.now()).getTime() - new Date(a.latest_event.checkin_at).getTime() : 0
-        const durB = b.latest_event ? new Date(b.latest_event.checkout_at ?? Date.now()).getTime() - new Date(b.latest_event.checkin_at).getTime() : 0
-        cmp = durA - durB
-      }
-      return sortDir === 'asc' ? cmp : -cmp
-    })
-  }, [data?.all_members, statusFilter, signalFilter, search, sortBy, sortDir])
-
-  const totalFiltered = filtered.length
-  const totalPages = Math.ceil(totalFiltered / PAGE_SIZE)
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-  const presentMembers = paged.filter(m => m.presence_status === 'present')
-  const visitedMembers = paged.filter(m => m.presence_status === 'visited')
-  const notInMembers = paged.filter(m => m.presence_status === 'notIn')
-  const isFiltering = search.trim() !== '' || statusFilter !== 'all' || signalFilter !== 'all'
-
-  const resetFilters = () => { setSearch(''); setStatusFilter('all'); setSignalFilter('all'); setPage(1) }
+  const allMembers = data?.all_members ?? []
+  const presentMembers = allMembers.filter(m => m.presence_status === 'present')
+  const visitedMembers = allMembers.filter(m => m.presence_status === 'visited')
 
   return (
     <div style={{ padding: '24px', minHeight: '100%' }}>
       {/* Export button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div>
+          <h1 style={{
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '20px', fontWeight: 700,
+            color: 'var(--text-primary)', margin: 0, lineHeight: 1.2,
+          }}>
+            {data?.workspace_name ?? slug}
+          </h1>
+          <span style={{
+            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px',
+            color: 'var(--text-muted)', marginTop: '2px', display: 'block',
+          }}>
+            Dashboard
+          </span>
+        </div>
         <button
           type="button"
           onClick={async () => {
@@ -1111,95 +1014,12 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
 
       {/* ── Graphs row ── */}
       <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'stretch', flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, minWidth: '300px' }}>
+        <div style={{ flex: 2, minWidth: '300px', display: 'flex', flexDirection: 'column' }}>
           <OfficePresenceGraph buckets={todayHourlyData?.buckets ?? []} loading={todayHourlyLoading} />
         </div>
-        <div style={{ flex: 1, minWidth: '220px' }}>
+        <div style={{ flex: 1, minWidth: '220px', display: 'flex', flexDirection: 'column' }}>
           <RealtimeWidget data={realtimeData} loading={realtimeLoading} activeCount={counts.present} locationCounts={data?.location_counts} />
         </div>
-      </div>
-
-      {/* ── Filter bar ── */}
-      <div style={{
-        background: 'var(--surface-0)', border: '1px solid var(--border)',
-        borderRadius: 'var(--radius-md)', padding: '12px 14px', marginBottom: '12px',
-      }}>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative', flex: '1 1 200px', minWidth: '160px' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-              style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }}>
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input
-              type="search" value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-              placeholder="Search by name or email…"
-              style={{
-                width: '100%', height: '36px', padding: '0 10px 0 32px',
-                border: '1px solid var(--border)', borderRadius: '8px',
-                fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
-                background: 'var(--surface-1)', color: 'var(--text-primary)',
-                outline: 'none', boxSizing: 'border-box',
-              }}
-            />
-          </div>
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <select value={sortBy} onChange={(e) => { setSortBy(e.target.value as SortBy); setPage(1) }} style={{
-              height: '36px', padding: '0 8px', border: '1px solid var(--border)',
-              borderRadius: '8px', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif',
-              background: 'var(--surface-1)', color: 'var(--text-secondary)', cursor: 'pointer', outline: 'none',
-            }}>
-              <option value="time">Sort: Time in</option>
-              <option value="name">Sort: Name</option>
-              <option value="duration">Sort: Duration</option>
-            </select>
-            <button type="button" onClick={() => { setSortDir(d => d === 'asc' ? 'desc' : 'asc'); setPage(1) }}
-              title={sortDir === 'asc' ? 'Ascending' : 'Descending'}
-              style={{
-                width: '36px', height: '36px', border: '1px solid var(--border)',
-                borderRadius: '8px', background: 'var(--surface-1)',
-                color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >
-              {sortDir === 'asc' ? '↑' : '↓'}
-            </button>
-            <button type="button" onClick={() => setShowAdvanced(v => !v)} style={{
-              height: '36px', padding: '0 10px',
-              border: showAdvanced ? '1px solid color-mix(in srgb, var(--brand) 40%, transparent)' : '1px solid var(--border)',
-              borderRadius: '8px',
-              background: showAdvanced ? 'color-mix(in srgb, var(--brand) 10%, transparent)' : 'var(--surface-1)',
-              color: showAdvanced ? 'var(--brand)' : 'var(--text-secondary)',
-              cursor: 'pointer', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', whiteSpace: 'nowrap',
-            }}>
-              Filters {showAdvanced ? '▲' : '▼'}
-            </button>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          <TabPill active={statusFilter === 'all'}     onClick={() => { setStatusFilter('all'); setPage(1) }}>All</TabPill>
-          <TabPill active={statusFilter === 'present'} onClick={() => { setStatusFilter('present'); setPage(1) }}>In office ({counts.present})</TabPill>
-          <TabPill active={statusFilter === 'visited'} onClick={() => { setStatusFilter('visited'); setPage(1) }}>Visited ({counts.visited})</TabPill>
-          <TabPill active={statusFilter === 'notIn'}   onClick={() => { setStatusFilter('notIn'); setPage(1) }}>Not in ({counts.notIn})</TabPill>
-        </div>
-        {showAdvanced && (
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--border)' }}>
-            <span style={{ fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--text-muted)' }}>Signal:</span>
-            {(['all', 'wifi', 'gps', 'ip', 'override'] as SignalFilter[]).map((v) => (
-              <SignalPill key={v} value={v} active={signalFilter === v} onClick={() => { setSignalFilter(v); setPage(1) }} />
-            ))}
-            {isFiltering && (
-              <button type="button" onClick={resetFilters} style={{
-                marginLeft: 'auto', height: '28px', padding: '0 10px',
-                border: '1px solid var(--border)', borderRadius: '6px',
-                background: 'var(--surface-0)', color: 'var(--text-muted)',
-                fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', cursor: 'pointer',
-              }}>
-                Reset
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       {/* ── Member rows ── */}
@@ -1229,62 +1049,25 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
         })
       ) : (
         <>
-          {(statusFilter === 'all' || statusFilter === 'present') && presentMembers.length > 0 && (
+          {presentMembers.length > 0 && (
             <>
-              {statusFilter === 'all' && <SectionLabel color="var(--brand)">In office now ({counts.present})</SectionLabel>}
+              <SectionLabel color="var(--brand)">In office now ({counts.present})</SectionLabel>
               {presentMembers.map((m) => <PersonRow key={m.member_id} member={m} tz={tz} slug={slug} />)}
             </>
           )}
-          {(statusFilter === 'all' || statusFilter === 'visited') && visitedMembers.length > 0 && (
+          {visitedMembers.length > 0 && (
             <>
-              {statusFilter === 'all' && <SectionLabel color="var(--amber)">Visited today ({counts.visited})</SectionLabel>}
+              <SectionLabel color="var(--amber)">Visited today ({counts.visited})</SectionLabel>
               {visitedMembers.map((m) => <PersonRow key={m.member_id} member={m} tz={tz} slug={slug} />)}
             </>
           )}
-          {(statusFilter === 'all' || statusFilter === 'notIn') && notInMembers.length > 0 && (
-            <>
-              {statusFilter === 'all' && <SectionLabel>Not in today ({counts.notIn})</SectionLabel>}
-              {notInMembers.map((m) => <NotInRow key={m.member_id} member={m} slug={slug} />)}
-            </>
-          )}
-          {filtered.length === 0 && isFiltering && (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-muted)' }}>
-                No members match the current filters.
-              </p>
-              <button type="button" onClick={resetFilters} style={{
-                marginTop: '10px', background: 'none', border: 'none',
-                fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--brand)', cursor: 'pointer', padding: 0,
-              }}>
-                Reset filters
-              </button>
-            </div>
-          )}
-          {counts.total === 0 && !isFiltering && !dashLoading && (
+
+          {counts.total === 0 && !dashLoading && (
             <div style={{ padding: '48px 0', textAlign: 'center' }}>
               <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '15px', color: 'var(--text-secondary)' }}>No members yet.</p>
               <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
                 Invite people from the People tab to get started.
               </p>
-            </div>
-          )}
-          {totalPages > 1 && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', margin: '16px 0' }}>
-              <button type="button" disabled={page <= 1} onClick={() => setPage(p => p - 1)} style={{
-                height: '32px', padding: '0 14px', border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-md)', background: 'var(--surface-0)',
-                color: page <= 1 ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', cursor: page <= 1 ? 'default' : 'pointer',
-              }}>← Prev</button>
-              <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)' }}>
-                {page} / {totalPages} · {totalFiltered} members
-              </span>
-              <button type="button" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} style={{
-                height: '32px', padding: '0 14px', border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-md)', background: 'var(--surface-0)',
-                color: page >= totalPages ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', cursor: page >= totalPages ? 'default' : 'pointer',
-              }}>Next →</button>
             </div>
           )}
         </>
