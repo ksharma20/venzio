@@ -8,6 +8,7 @@ import type { MemberStatsResponse, StatsInterval } from '@/app/api/ws/[slug]/mem
 import type { RealtimeResponse } from '@/app/api/ws/[slug]/realtime/route'
 import type { MatchedBy } from '@/lib/signals'
 import { fmtHours, fmtTime, durationLabel } from '@/lib/client/format-time'
+import { Users, Monitor, Home, Activity } from 'lucide-react'
 
 interface Props {
   slug: string
@@ -216,7 +217,7 @@ function SectionLabel({ children, color }: { children: React.ReactNode; color?: 
 // ─── Stat Card (HEAD: full version with title/sub/accent/critical/onClick) ────
 
 function StatCard({
-  title, value, sub, accent, icon, critical, onClick,
+  title, value, sub, accent, icon, critical, onClick, className,
 }: {
   title: string
   value: React.ReactNode
@@ -225,6 +226,7 @@ function StatCard({
   critical?: boolean
   icon: React.ReactNode
   onClick?: () => void
+  className?: string
 }) {
   const borderColor = critical ? 'var(--danger)' : accent ? 'var(--brand)' : 'var(--border)'
   const iconBg = critical
@@ -236,6 +238,7 @@ function StatCard({
 
   return (
     <div
+      className={className}
       onClick={onClick}
       style={{
         background: 'var(--surface-0)',
@@ -429,10 +432,10 @@ function StatBar({ value, max, color }: { value: number; max: number; color: str
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ flex: 1, height: '6px', background: 'var(--surface-2)', borderRadius: '3px', overflow: 'hidden', minWidth: '60px' }}>
+      <div style={{ flex: 1, height: '6px', background: 'var(--surface-2)', borderRadius: '3px', overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: '3px', transition: 'width 0.3s' }} />
       </div>
-      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text-secondary)', minWidth: '18px', textAlign: 'right' }}>
+      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'right', flexShrink: 0 }}>
         {value}
       </span>
     </div>
@@ -507,6 +510,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
         </div>
       </div>
 
+      <div className="dash-table-scroll"><div className="dash-table-min">
       <div style={{
         display: 'grid',
         gridTemplateColumns: '2fr 1.4fr 1.4fr 1.4fr 100px 100px',
@@ -632,6 +636,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
           </p>
         </div>
       )}
+      </div></div>
     </div>
   )
 }
@@ -779,9 +784,7 @@ function OfficePresenceGraph({ buckets, loading }: { buckets: InsightBucket[]; l
           background: 'color-mix(in srgb, var(--brand) 12%, transparent)', color: 'var(--brand)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
+          <Activity size={14} />
         </div>
         <div>
           <span style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -922,7 +925,7 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
   const visitedMembers = allMembers.filter(m => m.presence_status === 'visited')
 
   return (
-    <div style={{ padding: '24px', minHeight: '100%' }}>
+    <div className="dash-page" style={{ padding: '24px', minHeight: '100%' }}>
       {/* Export button */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div>
@@ -975,55 +978,43 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
       {/* ── Stat cards ── */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
         <StatCard
+          className="dash-stat-card"
           title="Total Employees"
           value={counts.total}
           sub="Active personnel count"
           onClick={() => setModal({ title: 'Total Employees', members: data?.all_members ?? [] })}
-          icon={
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          }
+          icon={<Users size={16} />}
         />
         <StatCard
+          className="dash-stat-card"
           title="In Office"
           value={counts.office}
           sub="via Wi-Fi or GPS"
           onClick={() => setModal({ title: 'In Office', members: (data?.all_members ?? []).filter(m => m.presence_status !== 'notIn' && (m.latest_event?.matched_by === 'wifi' || m.latest_event?.matched_by === 'gps')) })}
-          icon={
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          }
+          icon={<Monitor size={16} />}
         />
         <StatCard
+          className="dash-stat-card"
           title="Remote"
           value={counts.remote}
           sub="working remotely"
           onClick={() => setModal({ title: 'Remote', members: (data?.all_members ?? []).filter(m => m.presence_status !== 'notIn' && m.latest_event?.matched_by !== 'wifi' && m.latest_event?.matched_by !== 'gps') })}
-          icon={
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-          }
+          icon={<Home size={16} />}
         />
       </div>
 
       {/* ── Graphs row ── */}
       <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'stretch', flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, minWidth: '300px', display: 'flex', flexDirection: 'column' }}>
+        <div className="dash-graph-item" style={{ flex: 2, minWidth: '300px', display: 'flex', flexDirection: 'column' }}>
           <OfficePresenceGraph buckets={todayHourlyData?.buckets ?? []} loading={todayHourlyLoading} />
         </div>
-        <div style={{ flex: 1, minWidth: '220px', display: 'flex', flexDirection: 'column' }}>
+        <div className="dash-graph-item" style={{ flex: 1, minWidth: '220px', display: 'flex', flexDirection: 'column' }}>
           <RealtimeWidget data={realtimeData} loading={realtimeLoading} activeCount={counts.present} locationCounts={data?.location_counts} />
         </div>
       </div>
 
       {/* ── Member rows ── */}
-      {dashLoading ? (
+      {/* {dashLoading ? (
         [1, 2, 3].map((i) => {
           const sk: React.CSSProperties = {
             background: 'linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%)',
@@ -1071,7 +1062,7 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
             </div>
           )}
         </>
-      )}
+      )} */}
 
       {/* ── Attendance stats table ── */}
       <div style={{ marginTop: '32px' }}>

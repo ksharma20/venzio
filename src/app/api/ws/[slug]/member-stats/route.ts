@@ -115,7 +115,8 @@ export async function GET(
       const dayKey = (ev.checkin_at.includes('T') ? ev.checkin_at : ev.checkin_at.replace(' ', 'T') + 'Z').slice(0, 10)
       if (ev.matched_by === 'wifi' || ev.matched_by === 'gps') {
         officeDaySet.add(dayKey)
-      } else if (ev.matched_by === 'ip') {
+      } else {
+        // ip, override, or none (checked in but outside office signal) → remote
         remoteDaySet.add(dayKey)
       }
       if (ev.checkout_location_mismatch === 1) {

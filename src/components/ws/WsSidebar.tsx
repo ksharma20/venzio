@@ -2,73 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import {
+  LayoutDashboard, Users, BarChart2, Calendar, Bell, Settings,
+  PanelLeftOpen, PanelLeftClose, LayoutGrid, User,
+} from 'lucide-react'
 
 const NAV_ITEMS = [
-  {
-    path: '',
-    label: 'Dashboard',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-      </svg>
-    ),
-  },
-  {
-    path: '/people',
-    label: 'People',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-      </svg>
-    ),
-  },
-  {
-    path: '/insights',
-    label: 'Analytics',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10"/>
-        <line x1="12" y1="20" x2="12" y2="4"/>
-        <line x1="6" y1="20" x2="6" y2="14"/>
-      </svg>
-    ),
-  },
-  {
-    path: '/monthly',
-    label: 'Activity',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-    ),
-  },
-  {
-    path: '/disputes',
-    label: 'Alerts',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-      </svg>
-    ),
-  },
-  {
-    path: '/settings',
-    label: 'Settings',
-    icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
-    ),
-  },
+  { path: '',           label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
+  { path: '/people',    label: 'People',    icon: <Users size={18} /> },
+  { path: '/insights',  label: 'Analytics', icon: <BarChart2 size={18} /> },
+  { path: '/monthly',   label: 'Activity',  icon: <Calendar size={18} /> },
+  { path: '/disputes',  label: 'Alerts',    icon: <Bell size={18} /> },
+  { path: '/settings',  label: 'Settings',  icon: <Settings size={18} /> },
 ]
 
 interface Props {
@@ -77,115 +23,174 @@ interface Props {
 
 export default function WsSidebar({ slug }: Props) {
   const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      if (mobile) setCollapsed(true)
+    }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) setCollapsed(true)
+  }, [pathname, isMobile])
+
+  const sidebarBg = `
+    radial-gradient(ellipse at 20% 10%, rgba(29,158,117,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,212,170,0.10) 0%, transparent 50%),
+    linear-gradient(160deg, #0f2a1e 0%, #0d2118 50%, #081a12 100%)
+  `
+
+  const mobileExpanded = isMobile && !collapsed
 
   return (
-    <aside style={{
-      width: '220px',
-      minWidth: '220px',
-      background: `
-        radial-gradient(ellipse at 20% 10%, rgba(29,158,117,0.18) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 80%, rgba(0,212,170,0.10) 0%, transparent 50%),
-        linear-gradient(160deg, #0f2a1e 0%, #0d2118 50%, #081a12 100%)
-      `,
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100dvh',
-      overflowY: 'auto',
-      flexShrink: 0,
-      zIndex: 40,
-      position: 'relative',
-    }}>
-      {/* Logo */}
-      <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--sidebar-active-bg)' }}>
-        <img src="/logo.png" alt="Venzio" style={{ height: '36px', width: 'auto' }} />
-      </div>
+    <>
+      {mobileExpanded && (
+        <div
+          onClick={() => setCollapsed(true)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 39 }}
+        />
+      )}
 
-      {/* Nav items */}
-      <nav style={{ flex: 1, padding: '8px 10px' }}>
-        {NAV_ITEMS.map(({ path, label, icon }) => {
-          const href = `/ws/${slug}${path}`
-          const isActive = path === ''
-            ? pathname === href
-            : pathname === href || pathname.startsWith(href + '/')
-          return (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '10px 12px',
-                borderRadius: '8px',
-                marginBottom: '2px',
-                background: isActive ? 'rgba(0,212,170,0.13)' : 'transparent',
-                color: isActive ? '#00D4AA' : 'rgba(255,255,255,0.62)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                fontSize: '13.5px',
-                fontWeight: isActive ? 600 : 400,
-                textDecoration: 'none',
-                transition: 'background 0.15s, color 0.15s',
-                borderLeft: isActive ? '3px solid #00D4AA' : '3px solid transparent',
-              }}
-            >
-              {icon}
-              {label}
+      <aside
+        className="ws-sidebar"
+        style={{
+          position: mobileExpanded ? 'fixed' : 'relative',
+          top: mobileExpanded ? 0 : undefined,
+          left: mobileExpanded ? 0 : undefined,
+          width: isMobile ? (collapsed ? '62px' : '100vw') : (collapsed ? '62px' : '220px'),
+          minWidth: isMobile ? (collapsed ? '62px' : undefined) : (collapsed ? '62px' : '220px'),
+          background: sidebarBg,
+          display: 'flex', flexDirection: 'column',
+          height: '100dvh', overflowY: 'auto', overflowX: 'hidden',
+          flexShrink: 0, zIndex: 40,
+          transition: 'width 0.22s ease, min-width 0.22s ease',
+        }}
+      >
+        {/* Header */}
+        <div style={{
+          padding: '0 10px', height: '64px',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          display: 'flex', alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'space-between',
+          flexShrink: 0, gap: '8px',
+        }}>
+          {!collapsed && (
+            <img src="/logo.png" alt="Venzio" className="ws-sidebar-logo"
+              style={{ height: '32px', width: 'auto', flexShrink: 0 }} />
+          )}
+          <button
+            type="button"
+            onClick={() => setCollapsed(v => !v)}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            style={{
+              width: '32px', height: '32px', flexShrink: 0,
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              borderRadius: '8px', color: 'rgba(255,255,255,0.55)',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            {collapsed
+              ? <PanelLeftOpen size={15} />
+              : <PanelLeftClose size={15} />
+            }
+          </button>
+        </div>
+
+        {/* Nav items */}
+        <nav style={{ flex: 1, padding: '10px 8px' }}>
+          {NAV_ITEMS.map(({ path, label, icon }) => {
+            const href = `/ws/${slug}${path}`
+            const isActive = path === ''
+              ? pathname === href
+              : pathname === href || pathname.startsWith(href + '/')
+            return (
+              <Link
+                key={href}
+                href={href}
+                title={collapsed ? label : undefined}
+                style={{
+                  display: 'flex', alignItems: 'center',
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  gap: '10px',
+                  padding: collapsed ? '11px 0' : '10px 12px',
+                  borderRadius: '8px', marginBottom: '2px',
+                  background: isActive ? 'rgba(0,212,170,0.13)' : 'transparent',
+                  color: isActive ? '#00D4AA' : 'rgba(255,255,255,0.62)',
+                  fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  fontSize: '13.5px', fontWeight: isActive ? 600 : 400,
+                  textDecoration: 'none',
+                  transition: 'background 0.15s, color 0.15s',
+                  borderLeft: isActive && !collapsed ? '3px solid #00D4AA' : '3px solid transparent',
+                  whiteSpace: 'nowrap', overflow: 'hidden',
+                }}
+              >
+                <span style={{ flexShrink: 0, display: 'flex' }}>{icon}</span>
+                {!collapsed && <span className="ws-sidebar-label">{label}</span>}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Bottom links — expanded */}
+        {!collapsed && (
+          <div className="ws-sidebar-bottom" style={{
+            padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.07)',
+            display: 'flex', flexDirection: 'column', gap: '2px',
+          }}>
+            <Link href="/ws" style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              padding: '9px 12px', borderRadius: '8px',
+              color: 'rgba(255,255,255,0.38)',
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px',
+              textDecoration: 'none', transition: 'color 0.15s',
+            }}>
+              <LayoutGrid size={14} />
+              Workspaces
             </Link>
-          )
-        })}
-      </nav>
+            <Link href="/me" style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              padding: '9px 12px', borderRadius: '8px',
+              color: 'rgba(255,255,255,0.38)',
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px',
+              textDecoration: 'none', transition: 'color 0.15s',
+            }}>
+              <User size={14} />
+              My Profile
+            </Link>
+          </div>
+        )}
 
-      {/* Bottom links */}
-      <div style={{
-        padding: '12px 10px',
-        borderTop: '1px solid var(--sidebar-border)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2px',
-      }}>
-        <Link
-          href="/ws"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '9px 12px',
-            borderRadius: '8px',
-            color: 'rgba(255,255,255,0.38)',
-            fontFamily: 'Plus Jakarta Sans, sans-serif',
-            fontSize: '12px',
-            textDecoration: 'none',
-            transition: 'color 0.15s',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-          </svg>
-          Workspaces
-        </Link>
-        <Link
-          href="/me"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '9px 12px',
-            borderRadius: '8px',
-            color: 'rgba(255,255,255,0.38)',
-            fontFamily: 'Plus Jakarta Sans, sans-serif',
-            fontSize: '12px',
-            textDecoration: 'none',
-            transition: 'color 0.15s',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-          My Profile
-        </Link>
-      </div>
-    </aside>
+        {/* Bottom links — collapsed (icon only) */}
+        {collapsed && (
+          <div style={{
+            padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.07)',
+            display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center',
+          }}>
+            <Link href="/ws" title="Workspaces" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '38px', height: '38px', borderRadius: '8px',
+              color: 'rgba(255,255,255,0.38)', textDecoration: 'none',
+            }}>
+              <LayoutGrid size={15} />
+            </Link>
+            <Link href="/me" title="My Profile" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '38px', height: '38px', borderRadius: '8px',
+              color: 'rgba(255,255,255,0.38)', textDecoration: 'none',
+            }}>
+              <User size={15} />
+            </Link>
+          </div>
+        )}
+      </aside>
+    </>
   )
 }
