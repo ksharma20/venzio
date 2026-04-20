@@ -1,18 +1,17 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import type { DashboardMember, DashboardResponse } from '@/app/api/ws/[slug]/dashboard/route'
 import type { InsightsResponse, InsightBucket } from '@/app/api/ws/[slug]/insights/route'
 import type { MemberStatsResponse, StatsInterval } from '@/app/api/ws/[slug]/member-stats/route'
 import type { RealtimeResponse } from '@/app/api/ws/[slug]/realtime/route'
-import type { MatchedBy } from '@/lib/signals'
-import { fmtHours, fmtTime, durationLabel } from '@/lib/client/format-time'
+import { fmtHours } from '@/lib/client/format-time'
 import { Users, Monitor, Home, Activity } from 'lucide-react'
 
 interface Props {
   slug: string
-  tz?: string
   planLimitBanner?: React.ReactNode
 }
 
@@ -25,52 +24,7 @@ function getInitials(s: string): string {
   return s.slice(0, 2).toUpperCase()
 }
 
-// ─── Signal badge (from incoming branch) ─────────────────────────────────────
-
-const SIGNAL_BADGE: Record<MatchedBy, { label: string; color: string; bg: string }> = {
-  wifi:     { label: 'WiFi',     color: 'var(--teal)',       bg: 'color-mix(in srgb, var(--teal) 12%, transparent)' },
-  gps:      { label: 'GPS',      color: 'var(--brand)',      bg: 'color-mix(in srgb, var(--brand) 12%, transparent)' },
-  ip:       { label: 'IP',       color: 'var(--amber)',      bg: 'color-mix(in srgb, var(--amber) 12%, transparent)' },
-  override: { label: 'Override', color: '#8B5CF6',           bg: 'color-mix(in srgb, #8B5CF6 12%, transparent)' },
-  none:     { label: '—',        color: 'var(--text-muted)', bg: 'transparent' },
-}
-
-function SignalBadge({ matchedBy }: { matchedBy: MatchedBy }) {
-  const badge = SIGNAL_BADGE[matchedBy]
-  if (matchedBy === 'none') return <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>—</span>
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', height: '20px', padding: '0 7px',
-      borderRadius: '4px', fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600,
-      color: badge.color, background: badge.bg, border: `1px solid ${badge.color}`, whiteSpace: 'nowrap',
-    }}>
-      {badge.label}
-    </span>
-  )
-}
-
-// ─── Avatar (from incoming branch) ────────────────────────────────────────────
-
-function Avatar({ name, status }: { name: string; status: 'present' | 'visited' | 'notIn' }) {
-  const theme = {
-    present: { bg: 'color-mix(in srgb, var(--brand) 15%, transparent)', color: 'var(--brand)', ring: 'var(--brand)' },
-    visited: { bg: 'color-mix(in srgb, var(--amber) 15%, transparent)', color: 'var(--amber)', ring: 'var(--amber)' },
-    notIn:   { bg: 'var(--surface-2)', color: 'var(--text-muted)', ring: 'transparent' },
-  }[status]
-  return (
-    <div style={{
-      width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
-      background: theme.bg, color: theme.color,
-      fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 700,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      boxShadow: status !== 'notIn' ? `0 0 0 2px ${theme.ring}` : 'none',
-    }}>
-      {getInitials(name)}
-    </div>
-  )
-}
-
-// ─── Status badge (HEAD: VERIFIED = green brand) ──────────────────────────────
+// ─── Status badge ─────────────────────────────────────────────────────────────
 
 function StatusBadge({ member }: { member: DashboardMember }) {
   const hasTrust = (member.latest_event?.trust_flags?.length ?? 0) > 0
@@ -111,110 +65,7 @@ function StatusBadge({ member }: { member: DashboardMember }) {
   )
 }
 
-// ─── Row components (from incoming branch) ────────────────────────────────────
-
-function TrustBadge() {
-  return (
-    <span title="Suspicious trust signals detected" style={{
-      display: 'inline-flex', alignItems: 'center', height: '18px', padding: '0 5px',
-      borderRadius: '4px', fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600,
-      color: 'var(--amber)', background: 'color-mix(in srgb, var(--amber) 12%, transparent)',
-      border: '1px solid color-mix(in srgb, var(--amber) 40%, transparent)',
-      whiteSpace: 'nowrap', flexShrink: 0,
-    }}>
-      ⚠
-    </span>
-  )
-}
-
-function PersonRow({ member, slug }: { member: DashboardMember; tz?: string; slug: string }) {
-  const ev = member.latest_event
-  const displayName = member.full_name ?? member.email
-  const hasTrustIssue = (ev?.trust_flags?.length ?? 0) > 0
-  const isActive = member.presence_status === 'present'
-  const checkinTime = ev?.checkin_at ? fmtTime(ev.checkin_at) : null
-  const checkoutTime = ev?.checkout_at ? fmtTime(ev.checkout_at) : null
-  const dur = ev ? durationLabel(ev.checkin_at, ev.checkout_at ?? null) : null
-  const borderColor = member.presence_status === 'present' ? 'var(--brand)' : 'var(--amber)'
-
-  return (
-    <Link href={`/ws/${slug}/members/${member.user_id}`} style={{ textDecoration: 'none', display: 'block' }}>
-      <div
-        style={{
-          display: 'flex', alignItems: 'center', gap: '12px',
-          padding: '10px 14px',
-          background: 'var(--surface-0)', border: '1px solid var(--border)',
-          borderLeft: `3px solid ${borderColor}`,
-          borderRadius: 'var(--radius-md)', marginBottom: '6px',
-          transition: 'background 0.12s',
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-1)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface-0)' }}
-      >
-        <Avatar name={displayName} status={member.presence_status} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px', flexWrap: 'wrap' }}>
-            <span style={{
-              fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, fontSize: '13px',
-              color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              {displayName}
-            </span>
-            {member.event_count > 1 && (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'Plus Jakarta Sans, sans-serif', flexShrink: 0 }}>
-                ×{member.event_count}
-              </span>
-            )}
-            {hasTrustIssue && <TrustBadge />}
-            {ev && <SignalBadge matchedBy={ev.matched_by} />}
-          </div>
-          {member.full_name && (
-            <div style={{
-              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              {member.email}
-            </div>
-          )}
-        </div>
-        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          {checkinTime && (
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-              {checkinTime}{checkoutTime ? ` → ${checkoutTime}` : isActive ? ' →' : ''}
-            </div>
-          )}
-          {dur !== null ? (
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--brand)', fontWeight: 600, marginTop: '2px' }}>
-              {dur}
-            </div>
-          ) : isActive ? (
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>…</div>
-          ) : null}
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-
-// ─── Section label (from incoming branch) ─────────────────────────────────────
-
-function SectionLabel({ children, color }: { children: React.ReactNode; color?: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', marginTop: '22px' }}>
-      <div style={{ width: '3px', height: '14px', borderRadius: '2px', background: color ?? 'var(--border)', flexShrink: 0 }} />
-      <span style={{
-        fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 700,
-        color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em',
-      }}>
-        {children}
-      </span>
-    </div>
-  )
-}
-
-
-// ─── Stat Card (HEAD: full version with title/sub/accent/critical/onClick) ────
+// ─── Stat Card ────────────────────────────────────────────────────────────────
 
 function StatCard({
   title, value, sub, accent, icon, critical, onClick, className,
@@ -306,7 +157,7 @@ function MembersModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  return (
+  return createPortal(
     <div
       onClick={onClose}
       style={{
@@ -325,6 +176,7 @@ function MembersModal({
           width: '100%', maxWidth: '480px',
           maxHeight: '80vh',
           display: 'flex', flexDirection: 'column',
+          overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
         }}
       >
@@ -359,7 +211,7 @@ function MembersModal({
           </button>
         </div>
 
-        <div style={{ overflowY: 'auto', flex: 1 }}>
+        <div className="no-scrollbar" style={{ overflowY: 'auto', flex: 1, maxHeight: '600px', scrollbarWidth: 'none' } as React.CSSProperties}>
           {members.length === 0 ? (
             <div style={{ padding: '40px 20px', textAlign: 'center' }}>
               <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
@@ -422,11 +274,12 @@ function MembersModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
-// ─── Stat Bar (HEAD) ──────────────────────────────────────────────────────────
+// ─── Stat Bar ─────────────────────────────────────────────────────────────────
 
 function StatBar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0
@@ -554,7 +407,8 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
           </p>
         </div>
       ) : (
-        members.map((m) => {
+        <div className="no-scrollbar" style={{ maxHeight: '580px', overflowY: 'auto', scrollbarWidth: 'none' } as React.CSSProperties}>
+        {members.map((m) => {
           const name = m.full_name ?? m.email
           return (
             <Link key={m.member_id} href={`/ws/${slug}/members/${m.user_id}`} style={{ textDecoration: 'none' }}>
@@ -626,7 +480,8 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
               </div>
             </Link>
           )
-        })
+        })}
+        </div>
       )}
 
       {members.length > 0 && (
@@ -850,9 +705,8 @@ function OfficePresenceGraph({ buckets, loading }: { buckets: InsightBucket[]; l
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
+export default function TodayClient({ slug, planLimitBanner }: Props) {
   const [data, setData] = useState<DashboardResponse | null>(null)
-  const [dashLoading, setDashLoading] = useState(true)
   const [modal, setModal] = useState<{ title: string; members: DashboardMember[] } | null>(null)
 
   const [todayHourlyData, setTodayHourlyData] = useState<InsightsResponse | null>(null)
@@ -867,13 +721,8 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
 
 
   const fetchDash = useCallback(async () => {
-    setDashLoading(true)
-    try {
-      const res = await fetch(`/api/ws/${slug}/dashboard?status=all&signal=all&sortBy=name&sortDir=asc&page=1&limit=500`)
-      if (res.ok) setData(await res.json())
-    } finally {
-      setDashLoading(false)
-    }
+    const res = await fetch(`/api/ws/${slug}/dashboard?status=all&signal=all&sortBy=name&sortDir=asc&page=1&limit=500`)
+    if (res.ok) setData(await res.json())
   }, [slug])
 
   useEffect(() => { fetchDash() }, [fetchDash])
@@ -920,9 +769,6 @@ export default function TodayClient({ slug, tz, planLimitBanner }: Props) {
 
   const counts = data?.counts ?? { present: 0, visited: 0, notIn: 0, total: 0, office: 0, remote: 0 }
 
-  const allMembers = data?.all_members ?? []
-  const presentMembers = allMembers.filter(m => m.presence_status === 'present')
-  const visitedMembers = allMembers.filter(m => m.presence_status === 'visited')
 
   return (
     <div className="dash-page" style={{ padding: '24px', minHeight: '100%' }}>

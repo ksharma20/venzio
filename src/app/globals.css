@@ -92,6 +92,15 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+.no-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.no-scrollbar::-webkit-scrollbar {
+  width: 0 !important;
+  display: none !important;
+}
+
 /* Horizontal scroll container that hides its scrollbar (nav tabs, etc.) */
 .scroll-x {
   overflow-x: auto;

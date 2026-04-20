@@ -12,7 +12,6 @@ export default async function WsDashboardPage({ params }: Props) {
   const workspace = await getWorkspaceBySlug(slug)
   if (!workspace) notFound()
 
-  const tz = workspace.display_timezone
   // Plan limit banner
   const members = await getActiveMembersWithDetails(workspace.id)
   const planLimits = getPlanLimits(workspace.plan)
@@ -39,8 +38,6 @@ export default async function WsDashboardPage({ params }: Props) {
   return (
     <TodayClient
       slug={slug}
-      tz={tz}
-      workspaceName={workspace.name}
       planLimitBanner={planLimitBanner}
     />
   )
