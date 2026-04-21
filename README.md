@@ -66,6 +66,7 @@ src/
 │       │   ├── otp/send/route.ts       # POST — send OTP
 │       │   ├── otp/verify/route.ts     # POST — verify OTP + set cm_otp_ok cookie
 │       │   ├── register/route.ts       # POST — create account (personal or org)
+│       │   ├── reset-password/route.ts # POST — OTP-gated password reset
 │       │   └── logout/route.ts         # POST — clear session
 │       ├── workspace/
 │       │   ├── route.ts                # GET admin workspaces · POST create (max 1)
@@ -86,7 +87,11 @@ src/
 │       │       └── members/[memberId]/route.ts        # DELETE member
 │       ├── checkin/
 │       │   ├── route.ts                # POST — create presence event
-│       │   └── checkout/route.ts       # POST — check out of most recent open event
+│       │   ├── checkout/route.ts       # POST — check out of most recent open event
+│       │   └── extend/route.ts         # POST — extend auto-checkout by +8h
+│       ├── push/
+│       │   ├── subscribe/route.ts      # POST/DELETE — manage push subscriptions
+│       │   └── vapid-public-key/route.ts # GET — VAPID public key
 │       ├── events/
 │       │   ├── route.ts                # GET — user's events (paginated, date-filtered)
 │       │   └── [id]/route.ts           # PATCH note · DELETE returns 405 (data never deleted)
@@ -108,7 +113,9 @@ src/
 │   │       ├── events.ts
 │   │       ├── workspaces.ts
 │   │       ├── signals.ts
-│   │       └── stats.ts
+│   │       ├── stats.ts
+│   │       ├── tokens.ts  # API token queries
+│   │       └── push.ts    # Push subscription queries
 │   ├── auth.ts            # JWT, cookies, bcrypt, OTP, getServerUser(), OTP cookie
 │   ├── email.ts           # Resend email helpers (OTP + consent)
 │   ├── geo.ts             # Haversine, IP geolocation, extractIp()
@@ -117,7 +124,9 @@ src/
 │   ├── signals.ts         # Core dashboard query (signal matching)
 │   ├── stats.ts           # User stats computation
 │   ├── slug.ts            # validateSlug() — shared across check-slug, register, workspace
-│   └── password.ts        # validatePassword() — shared across register, me/password
+│   ├── password.ts        # validatePassword() — shared across register, me/password
+│   ├── push.ts            # Server-side Web Push (VAPID) utility
+│   └── midnight.ts        # Next midnight UTC helper
 ├── components/
 │   ├── marketing/
 │   │   ├── MarketingNav.tsx    # Sticky nav: logo, centre links, Sign in / Get started
@@ -127,6 +136,8 @@ src/
 │       ├── CheckinButtons.tsx  # "I'm here" + "I'm leaving" (client — GPS + API)
 │       └── EventCard.tsx       # Presence event card with inline note edit (client)
 ├── proxy.ts               # Route protection (Next.js 16 — previously middleware.ts)
+public/
+└── sw.js                  # Service worker — push notifications + notification click actions
 scripts/
 └── migrate.js             # DB migration runner (plain Node.js)
 ```
@@ -191,7 +202,7 @@ App runs at `http://localhost:3000`.
 
 ## Database
 
-### Schema (11 tables + 5 column additions)
+### Schema (13 tables + 5 column additions)
 
 | Table                     | Purpose                                                             |
 | ------------------------- | ------------------------------------------------------------------- |
@@ -206,6 +217,8 @@ App runs at `http://localhost:3000`.
 | `admin_overrides`         | Additive admin overrides — audit log, never modifies events         |
 | `user_stats`              | Pre-computed streaks, totals — upserted after every check-in        |
 | `revoked_tokens`          | Invalidated JWT IDs (jti) — checked on every authenticated request  |
+| `push_subscriptions`      | Web Push endpoint + VAPID keys per user/device                      |
+| `rate_limit_log`          | Sliding-window rate limit log (IP-keyed for login, user-keyed for checkin) |
 
 The migration runner is idempotent. `ALTER TABLE` column additions are wrapped in try/catch so re-running is always safe:
 
@@ -241,6 +254,16 @@ sqlite3 venzio.db ".schema users"
 Email input
     │
     ├─ Email exists ──────────────▶ Password ──▶ Sign in ──▶ redirect
+    │                                   │
+    │                              Forgot password?
+    │                                   │
+    │                         OTP sent to email (forgotPassword)
+    │                                   │
+    │                         OTP verified (cm_otp_ok cookie)
+    │                                   │
+    │                         Enter new password (resetPassword)
+    │                                   │
+    │                              Password updated ──▶ redirect
     │
     └─ Email not found ───────────▶ OTP sent to email
                                          │
@@ -296,7 +319,7 @@ Server-rendered shell + client-rendered state. Shows:
 
 **GPS flow in CheckinButtons:** `navigator.geolocation.getCurrentPosition()` is called on button tap. If denied, check-in still proceeds with null GPS — a toast explains why. WiFi SSID is read from `navigator.connection?.ssid` (Chrome desktop/Android only).
 
-**Stale check-in notifications:** On first check-in, the browser is asked for Notification permission. If granted, browser notifications are scheduled at 8h and 16h from check-in time. After the 3rd interval (24h) the client automatically calls `POST /api/checkin/checkout` with `reason: maximum_hours_exceeded`. The reason is stored in `presence_events.checkout_reason`. Notification timers are cancelled on manual checkout.
+**Stale check-in notifications:** On first check-in, the browser is asked for Notification permission. If granted, Web Push notifications are sent at 4h, 8h, 12h, 16h, 18h, 20h, 22h from check-in time. At T+12h a 15-minute warning is sent with a "Still here? Extend by 8h" action. Auto-checkout fires at T+12h from check-in via `POST /api/checkin/checkout` with `reason: maximum_hours_exceeded`. The reason is stored in `presence_events.checkout_reason`. Notification timers are cancelled on manual checkout.
 
 ### `/me/timeline`
 
@@ -416,13 +439,13 @@ Server-rendered. Shows who is present right now, who visited today, and who hasn
 
 **Signal badges:**
 
-| Badge    | Colour     | Meaning                                   |
-| -------- | ---------- | ----------------------------------------- |
-| WiFi     | Teal       | Matched by WiFi SSID                      |
-| GPS      | Brand blue | Matched by GPS proximity                  |
-| IP       | Amber      | Matched by IP geolocation                 |
-| Override | Purple     | Admin override applied                    |
-| —        | Muted      | Config-light mode (no signals configured) |
+| Badge                        | Colour     | Meaning                                                     |
+| ---------------------------- | ---------- | ----------------------------------------------------------- |
+| ✓ GPS+WiFi (all signals)     | Teal       | `verified` — all configured signals matched                 |
+| ~ GPS (some signals)         | Amber      | `partial` — some configured signals matched                 |
+| Unverified                   | Muted grey | `none` — no signals matched                                 |
+| Override                     | Purple     | Admin override applied                                      |
+| —                            | Muted      | Config-light mode (no signals configured)                   |
 
 ---
 
@@ -437,6 +460,30 @@ Venzio is installable as a Progressive Web App on both mobile and desktop.
 - **Icons:** `/icon-192.png` and `/icon-512.png` — add to `public/` before deploying
 
 The `<meta name="apple-mobile-web-app-capable">` tag is set via `appleWebApp` in the root layout metadata, enabling full-screen mode on iOS when added to the home screen.
+
+### Push Notifications
+
+Venzio uses Web Push (VAPID) for reliable notifications on mobile PWA and desktop.
+
+Generate VAPID keys (one-time setup):
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Add to `.env.local`:
+
+```
+VAPID_PUBLIC_KEY=<your-public-key>
+VAPID_PRIVATE_KEY=<your-private-key>
+VAPID_EMAIL=mailto:your@email.com
+```
+
+Notifications sent:
+
+- Stale reminders at 4h, 8h, 12h, 16h, 18h, 20h, 22h from check-in
+- 15-min warning before auto-checkout: "Still here? Extend by 8h"
+- Auto-checkout at T+12h from check-in
 
 ---
 
@@ -465,16 +512,18 @@ All pages are fully static Server Components — no JavaScript required. All sha
 
 ## Login Page — `/login`
 
-Single entry point for all authentication. A 6-state client state machine:
+Single entry point for all authentication. An 8-state client state machine:
 
-| State         | Description                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------ |
-| `email`       | Enter email — checks existence via `/api/auth/check-email`                                 |
-| `password`    | Existing user — enter password                                                             |
-| `otp`         | New user — enter 6-digit code sent to email                                                |
-| `accountType` | OTP verified — choose Personal or Organisation                                             |
-| `personal`    | Enter name + password                                                                      |
-| `org`         | Enter org name, URL handle (live `/ws/check-slug` check), optional domain, name + password |
+| State           | Description                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| `email`         | Enter email — checks existence via `/api/auth/check-email`                                 |
+| `password`      | Existing user — enter password                                                             |
+| `otp`           | New user — enter 6-digit code sent to email                                                |
+| `accountType`   | OTP verified — choose Personal or Organisation                                             |
+| `personal`      | Enter name + password                                                                      |
+| `org`           | Enter org name, URL handle (live `/ws/check-slug` check), optional domain, name + password |
+| `forgotPassword`| Enter email for reset code                                                                 |
+| `resetPassword` | Enter new password (OTP-gated)                                                             |
 
 **OTP security:** After verify, a 15-minute signed `cm_otp_ok` httpOnly cookie is set server-side. The register route validates this cookie — the client never sends `otpVerified: true`.
 
@@ -499,8 +548,8 @@ The core dashboard function. Given a workspace and date range:
 1. Gets active member user IDs (honours plan user limit)
 2. Gets signal configs (GPS / WiFi / IP)
 3. If **no signal configs**: returns all events (config-light mode)
-4. If **signal configs exist**: filters events by proximity/WiFi match
-5. Returns each event with a `matched_by` field: `wifi | gps | ip | none | override`
+4. If **signal configs exist**: tests each event against ALL configured signal types (AND semantics)
+5. Returns each event with a `matched_by` field: `'verified'` (all signals matched) | `'partial'` (some matched) | `'none'` (no match) | `'override'` (admin override)
 
 ### `lib/domain-verify.ts`
 
@@ -698,8 +747,9 @@ All routes return JSON. Errors always return:
 | POST   | `/api/auth/login`       | None       | Email check or password verify       |
 | POST   | `/api/auth/otp/send`    | None       | Send 6-digit OTP to email            |
 | POST   | `/api/auth/otp/verify`  | None       | Verify OTP — sets `cm_otp_ok` cookie |
-| POST   | `/api/auth/register`    | OTP cookie | Create account (personal or org)     |
-| POST   | `/api/auth/logout`      | Cookie     | Clear session cookie                 |
+| POST   | `/api/auth/register`       | OTP cookie | Create account (personal or org)     |
+| POST   | `/api/auth/reset-password` | OTP cookie | Reset password after OTP verification |
+| POST   | `/api/auth/logout`         | Cookie     | Clear session cookie                 |
 
 #### `POST /api/auth/check-email`
 
@@ -884,3 +934,6 @@ Design rules:
 | `JWT_SECRET`          | **Yes**     | Random 32+ char string for JWT signing           |
 | `RESEND_API_KEY`      | Recommended | From resend.com. OTPs log to console if missing. |
 | `NEXT_PUBLIC_APP_URL` | Yes         | Full app URL (`http://localhost:3000` in dev)    |
+| `VAPID_PUBLIC_KEY`    | Recommended | Web Push public key. `npx web-push generate-vapid-keys` |
+| `VAPID_PRIVATE_KEY`   | Recommended | Web Push private key (never expose to client)   |
+| `VAPID_EMAIL`         | Recommended | Contact email for VAPID `mailto:` registration  |
