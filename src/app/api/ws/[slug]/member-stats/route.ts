@@ -11,10 +11,11 @@ export interface MemberStat {
   email: string
   full_name: string | null
   role: string
+  joined_at: string          // workspace join date YYYY-MM-DD
   office_days: number
   remote_days: number
   absent_days: number
-  total_working_days: number
+  total_working_days: number // effective working days from join date
   total_hours: number
   avg_hours_per_day: number
   multi_loc_days: number
@@ -92,7 +93,8 @@ export async function GET(
     getActiveMembersWithDetails(ctx.workspace.id),
   ])
 
-  const total_working_days = countWorkingDays(startDate, endDate)
+  const global_working_days = countWorkingDays(startDate, endDate)
+  const rangeDateStr = startDate.slice(0, 10)
 
   // Group events by user
   const byUser = new Map<string, typeof events>()
@@ -104,6 +106,13 @@ export async function GET(
 
   const memberStats: MemberStat[] = members.map((m) => {
     const userEvents = byUser.get(m.user_id) ?? []
+
+    // Per-member effective start: later of range start or workspace join date
+    const joinedDateStr = m.added_at.slice(0, 10)
+    const effectiveStart = joinedDateStr > rangeDateStr ? joinedDateStr : rangeDateStr
+    const member_working_days = joinedDateStr > rangeDateStr
+      ? countWorkingDays(effectiveStart, endDate)
+      : global_working_days
 
     // Distinct days by signal type
     const officeDaySet = new Set<string>()
@@ -128,7 +137,7 @@ export async function GET(
     const office_days = officeDaySet.size
     const remote_days = remoteDaySet.size
     const present_days = new Set([...officeDaySet, ...remoteDaySet]).size
-    const absent_days = Math.max(0, total_working_days - present_days)
+    const absent_days = Math.max(0, member_working_days - present_days)
     const avg_hours_per_day = present_days > 0
       ? Math.round((totalHours / present_days) * 10) / 10
       : 0
@@ -139,10 +148,11 @@ export async function GET(
       email: m.email,
       full_name: m.full_name,
       role: m.role,
+      joined_at: joinedDateStr,
       office_days,
       remote_days,
       absent_days,
-      total_working_days,
+      total_working_days: member_working_days,
       total_hours: Math.round(totalHours * 10) / 10,
       avg_hours_per_day,
       multi_loc_days: multiLocDaySet.size,
@@ -152,6 +162,6 @@ export async function GET(
   return NextResponse.json({
     interval,
     members: memberStats,
-    total_working_days,
+    total_working_days: global_working_days,
   } satisfies MemberStatsResponse)
 }

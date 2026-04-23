@@ -366,11 +366,12 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
       <div className="dash-table-scroll"><div className="dash-table-min">
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '2fr 1.4fr 1.4fr 1.4fr 100px 100px',
+        gridTemplateColumns: '2fr 90px 1.4fr 1.4fr 1.4fr 100px 100px',
         gap: '12px', padding: '10px 16px',
         borderBottom: '1px solid var(--border)', background: 'var(--surface-1)',
       }}>
         <span style={th}>Member</span>
+        <span style={th}>Joined</span>
         <span style={th}>Office</span>
         <span style={th}>Remote</span>
         <span style={th}>Absent</span>
@@ -382,7 +383,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
         [1, 2, 3, 4, 5].map((i) => (
           <div key={i} style={{
             display: 'grid',
-            gridTemplateColumns: '2fr 1.4fr 1.4fr 1.4fr 100px 100px',
+            gridTemplateColumns: '2fr 90px 1.4fr 1.4fr 1.4fr 100px 100px',
             gap: '12px', alignItems: 'center', padding: '14px 16px',
             borderBottom: '1px solid var(--border)',
           }}>
@@ -393,6 +394,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
                 <div style={{ ...sk, height: '10px', width: '120px' }} />
               </div>
             </div>
+            <div style={{ ...sk, height: '12px', width: '60px' }} />
             <div style={{ ...sk, height: '8px', width: '100%' }} />
             <div style={{ ...sk, height: '8px', width: '100%' }} />
             <div style={{ ...sk, height: '8px', width: '100%' }} />
@@ -415,7 +417,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '2fr 1.4fr 1.4fr 1.4fr 100px 100px',
+                  gridTemplateColumns: '2fr 90px 1.4fr 1.4fr 1.4fr 100px 100px',
                   gap: '12px', alignItems: 'center',
                   padding: '12px 16px', borderBottom: '1px solid var(--border)',
                   cursor: 'pointer', transition: 'background 0.12s',
@@ -446,6 +448,16 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
                     }}>
                       {m.full_name ? m.email : m.role}
                     </div>
+                  </div>
+                </div>
+                {/* Joined date */}
+                <div>
+                  <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>
+                    {m.joined_at.slice(8, 10)}{' '}
+                    {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m.joined_at.slice(5, 7)) - 1]}
+                  </div>
+                  <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '10px', color: 'var(--text-muted)' }}>
+                    {m.joined_at.slice(0, 4)}
                   </div>
                 </div>
                 <div>
