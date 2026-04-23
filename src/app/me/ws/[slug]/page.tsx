@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { durationLabel, fmtTime } from '@/lib/client/format-time'
+import { resolvePresenceTag, PRESENCE_TAG_CONFIG } from '@/lib/client/presence'
 import type { MemberTodaySummary } from '@/app/api/me/ws/[slug]/today/route'
 
 interface WorkspaceTodayResponse {
@@ -18,15 +19,12 @@ function Avatar({ name }: { name: string | null }) {
   )
 }
 
-function StatusPill({ status }: { status: MemberTodaySummary['presence_status'] }) {
-  const cfg = {
-    present: { label: 'In office',  color: 'var(--teal)' },
-    visited: { label: 'Left today', color: 'var(--text-secondary)' },
-    notIn:   { label: 'Not in',     color: 'var(--text-muted)' },
-  }[status]
+function StatusPill({ member }: { member: MemberTodaySummary }) {
+  const tag = resolvePresenceTag(member.presence_status, member.matched_by)
+  const { label, color } = PRESENCE_TAG_CONFIG[tag]
   return (
-    <span style={{ fontSize: '11px', fontFamily: 'DM Sans, sans-serif', fontWeight: 600, color: cfg.color, background: `color-mix(in srgb, ${cfg.color} 12%, transparent)`, padding: '2px 8px', borderRadius: '20px', border: `1px solid ${cfg.color}`, whiteSpace: 'nowrap' }}>
-      {cfg.label}
+    <span style={{ fontSize: '11px', fontFamily: 'DM Sans, sans-serif', fontWeight: 600, color, background: `color-mix(in srgb, ${color} 12%, transparent)`, padding: '2px 8px', borderRadius: '20px', border: `1px solid ${color}`, whiteSpace: 'nowrap' }}>
+      {label}
     </span>
   )
 }
@@ -45,7 +43,7 @@ function MemberRow({ m }: { m: MemberTodaySummary }) {
           </p>
         )}
       </div>
-      <StatusPill status={m.presence_status} />
+      <StatusPill member={m} />
     </div>
   )
 }
@@ -88,17 +86,19 @@ export default function WorkspaceTodayPage() {
     <div style={{ padding: '48px 20px', textAlign: 'center', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)' }}>{error ?? 'Workspace not found'}</div>
   )
 
-  const present = data.members.filter((m) => m.presence_status === 'present')
-  const visited = data.members.filter((m) => m.presence_status === 'visited')
-  const notIn   = data.members.filter((m) => m.presence_status === 'notIn')
+  const inOffice = data.members.filter((m) => resolvePresenceTag(m.presence_status, m.matched_by) === 'in_office')
+  const remote   = data.members.filter((m) => resolvePresenceTag(m.presence_status, m.matched_by) === 'remote')
+  const visited  = data.members.filter((m) => m.presence_status === 'visited')
+  const notIn    = data.members.filter((m) => m.presence_status === 'notIn')
 
   return (
     <div style={{ maxWidth: '480px', margin: '0 auto', padding: '20px 16px' }}>
       <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>{today}</p>
       <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '22px', fontWeight: 700, color: 'var(--navy)', marginBottom: '24px' }}>{data.workspace.name}</h1>
-      <Section title="In Office"  members={present} color="var(--teal)" />
-      <Section title="Left Today" members={visited} color="var(--text-secondary)" />
-      <Section title="Not In"     members={notIn}   color="var(--text-muted)" />
+      <Section title="In Office"  members={inOffice} color="var(--teal)" />
+      <Section title="Remote"     members={remote}   color="var(--amber)" />
+      <Section title="Left Today" members={visited}  color="var(--text-secondary)" />
+      <Section title="Not In"     members={notIn}    color="var(--text-muted)" />
       {data.members.length === 0 && (
         <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif', padding: '48px 0' }}>No members found.</p>
       )}

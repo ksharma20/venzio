@@ -8,6 +8,7 @@ import type { InsightsResponse, InsightBucket } from '@/app/api/ws/[slug]/insigh
 import type { MemberStatsResponse, StatsInterval } from '@/app/api/ws/[slug]/member-stats/route'
 import type { RealtimeResponse } from '@/app/api/ws/[slug]/realtime/route'
 import { fmtHours } from '@/lib/client/format-time'
+import { resolvePresenceTag, PRESENCE_TAG_CONFIG } from '@/lib/client/presence'
 import { Users, Monitor, Home, Activity } from 'lucide-react'
 
 interface Props {
@@ -28,17 +29,6 @@ function getInitials(s: string): string {
 
 function StatusBadge({ member }: { member: DashboardMember }) {
   const hasTrust = (member.latest_event?.trust_flags?.length ?? 0) > 0
-  if (member.presence_status === 'notIn') {
-    return (
-      <span style={{
-        display: 'inline-flex', alignItems: 'center', height: '22px', padding: '0 9px',
-        borderRadius: '5px', fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700,
-        background: 'var(--surface-2)', color: 'var(--text-muted)', letterSpacing: '0.04em',
-      }}>
-        ABSENT
-      </span>
-    )
-  }
   if (hasTrust) {
     return (
       <span style={{
@@ -52,15 +42,18 @@ function StatusBadge({ member }: { member: DashboardMember }) {
       </span>
     )
   }
+  const tag = resolvePresenceTag(member.presence_status, member.latest_event?.matched_by)
+  const { label, color } = PRESENCE_TAG_CONFIG[tag]
+  const isMuted = tag === 'not_in'
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', height: '22px', padding: '0 9px',
       borderRadius: '5px', fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700,
-      background: 'color-mix(in srgb, var(--brand) 12%, transparent)',
-      color: 'var(--brand)', letterSpacing: '0.04em',
-      border: '1px solid color-mix(in srgb, var(--brand) 30%, transparent)',
+      background: isMuted ? 'var(--surface-2)' : `color-mix(in srgb, ${color} 12%, transparent)`,
+      color, letterSpacing: '0.04em',
+      border: isMuted ? 'none' : `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
     }}>
-      VERIFIED
+      {label.toUpperCase()}
     </span>
   )
 }
