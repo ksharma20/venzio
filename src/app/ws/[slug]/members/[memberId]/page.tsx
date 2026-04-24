@@ -11,6 +11,7 @@ const SIGNAL_BADGE: Record<MatchedBy, { label: string; color: string }> = {
   ip: { label: "IP", color: "var(--amber)" },
   override: { label: "Override", color: "#8B5CF6" },
   none: { label: "—", color: "var(--text-muted)" },
+  unverified: { label: "No match", color: "var(--text-muted)" },
 };
 
 const TRUST_LABELS: Record<string, string> = {

@@ -867,6 +867,10 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
   }, [refreshAll, fetchDash, fetchTodayHourly])
 
   useEffect(() => {
+    if (statsInterval !== 'custom') fetchStats(statsInterval)
+  }, [fetchStats, statsInterval])
+
+  useEffect(() => {
     async function fetchRealtime() {
       setRealtimeLoading(true)
       try {
