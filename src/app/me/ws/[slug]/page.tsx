@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { durationLabel, fmtTime } from '@/lib/client/format-time'
 import { resolvePresenceTag, PRESENCE_TAG_CONFIG } from '@/lib/client/presence'
 import type { MemberTodaySummary } from '@/app/api/me/ws/[slug]/today/route'
 
@@ -20,7 +19,7 @@ function Avatar({ name }: { name: string | null }) {
 }
 
 function StatusPill({ member }: { member: MemberTodaySummary }) {
-  const tag = resolvePresenceTag(member.presence_status, member.matched_by)
+  const tag = resolvePresenceTag(member.presence_status, member.matched_by, member.event_type)
   const { label, color } = PRESENCE_TAG_CONFIG[tag]
   return (
     <span style={{ fontSize: '11px', fontFamily: 'DM Sans, sans-serif', fontWeight: 600, color, background: `color-mix(in srgb, ${color} 12%, transparent)`, padding: '2px 8px', borderRadius: '20px', border: `1px solid ${color}`, whiteSpace: 'nowrap' }}>
@@ -30,18 +29,11 @@ function StatusPill({ member }: { member: MemberTodaySummary }) {
 }
 
 function MemberRow({ m }: { m: MemberTodaySummary }) {
-  const dur = m.checkin_at ? durationLabel(m.checkin_at, m.checkout_at) : null
-  const sinceTime = m.checkin_at ? fmtTime(m.checkin_at) : null
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
       <Avatar name={m.full_name} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.full_name ?? m.email}</p>
-        {sinceTime && (
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
-            {m.presence_status === 'present' ? `Since ${sinceTime}` : sinceTime}{dur ? ` · ${dur}` : ''}
-          </p>
-        )}
+        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.full_name ?? m.email}</p>
       </div>
       <StatusPill member={m} />
     </div>
@@ -86,8 +78,8 @@ export default function WorkspaceTodayPage() {
     <div style={{ padding: '48px 20px', textAlign: 'center', fontFamily: 'DM Sans, sans-serif', color: 'var(--danger)' }}>{error ?? 'Workspace not found'}</div>
   )
 
-  const inOffice = data.members.filter((m) => resolvePresenceTag(m.presence_status, m.matched_by) === 'in_office')
-  const remote   = data.members.filter((m) => resolvePresenceTag(m.presence_status, m.matched_by) === 'remote')
+  const inOffice = data.members.filter((m) => resolvePresenceTag(m.presence_status, m.matched_by, m.event_type) === 'in_office')
+  const remote   = data.members.filter((m) => resolvePresenceTag(m.presence_status, m.matched_by, m.event_type) === 'remote')
   const visited  = data.members.filter((m) => m.presence_status === 'visited')
   const notIn    = data.members.filter((m) => m.presence_status === 'notIn')
 

@@ -3,7 +3,7 @@ import { requireWsAdmin } from '@/lib/ws-admin'
 import { getActiveMembersWithDetails } from '@/lib/db/queries/workspaces'
 import { queryWorkspaceEvents } from '@/lib/signals'
 
-export type StatsInterval = 'week' | 'month' | '3month'
+export type StatsInterval = 'week' | 'month' | '3month' | 'custom'
 
 export interface MemberStat {
   user_id: string
@@ -79,13 +79,15 @@ export async function GET(
     const d = new Date(now)
     d.setUTCMonth(d.getUTCMonth() - 2, 1)
     startDate = d.toISOString().slice(0, 10) + 'T00:00:00Z'
-  } else if (interval === '6month') {
-    const d = new Date(now)
-    d.setUTCMonth(d.getUTCMonth() - 5, 1)
-    startDate = d.toISOString().slice(0, 10) + 'T00:00:00Z'
+  } else if (interval === 'custom') {
+    const s = sp.get('start')
+    const e = sp.get('end')
+    startDate = s ? s + 'T00:00:00Z' : `${now.getUTCFullYear()}-${zp(now.getUTCMonth() + 1)}-01T00:00:00Z`
+    endDate = e ? e + 'T23:59:59Z' : todayStr + 'T23:59:59Z'
   } else {
-    // year
-    startDate = `${now.getUTCFullYear()}-01-01T00:00:00Z`
+    // fallback: current month
+    const y = now.getUTCFullYear(), m = now.getUTCMonth() + 1
+    startDate = `${y}-${zp(m)}-01T00:00:00Z`
   }
 
   const [events, members] = await Promise.all([
@@ -114,24 +116,34 @@ export async function GET(
       ? countWorkingDays(effectiveStart, endDate)
       : global_working_days
 
-    // Distinct days by signal type
+    // Group events by calendar day
+    const eventsByDay = new Map<string, typeof userEvents>()
+    for (const ev of userEvents) {
+      const dayKey = (ev.checkin_at.includes('T') ? ev.checkin_at : ev.checkin_at.replace(' ', 'T') + 'Z').slice(0, 10)
+      const arr = eventsByDay.get(dayKey) ?? []
+      arr.push(ev)
+      eventsByDay.set(dayKey, arr)
+    }
+
+    // Office takes priority: if a day has any office_checkin it's an office day
     const officeDaySet = new Set<string>()
     const remoteDaySet = new Set<string>()
     const multiLocDaySet = new Set<string>()
     let totalHours = 0
 
-    for (const ev of userEvents) {
-      const dayKey = (ev.checkin_at.includes('T') ? ev.checkin_at : ev.checkin_at.replace(' ', 'T') + 'Z').slice(0, 10)
-      if (ev.matched_by === 'wifi' || ev.matched_by === 'gps') {
+    for (const [dayKey, dayEvs] of eventsByDay) {
+      const hasOffice = dayEvs.some((ev) => ev.event_type !== 'remote_checkin' && ev.matched_by !== 'unverified')
+      if (hasOffice) {
         officeDaySet.add(dayKey)
       } else {
-        // ip, override, or none (checked in but outside office signal) → remote
         remoteDaySet.add(dayKey)
       }
-      if (ev.checkout_location_mismatch === 1) {
+      if (dayEvs.some((ev) => ev.checkout_location_mismatch === 1)) {
         multiLocDaySet.add(dayKey)
       }
-      totalHours += sessionHours(ev.checkin_at, ev.checkout_at)
+      for (const ev of dayEvs) {
+        totalHours += sessionHours(ev.checkin_at, ev.checkout_at)
+      }
     }
 
     const office_days = officeDaySet.size

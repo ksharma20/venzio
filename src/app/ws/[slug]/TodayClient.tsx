@@ -42,7 +42,7 @@ function StatusBadge({ member }: { member: DashboardMember }) {
       </span>
     )
   }
-  const tag = resolvePresenceTag(member.presence_status, member.latest_event?.matched_by)
+  const tag = resolvePresenceTag(member.presence_status, member.latest_event?.matched_by, member.latest_event?.event_type)
   const { label, color } = PRESENCE_TAG_CONFIG[tag]
   const isMuted = tag === 'not_in'
   return (
@@ -294,15 +294,21 @@ const STATS_INTERVALS: { key: StatsInterval; label: string }[] = [
   { key: 'week',   label: 'Week' },
   { key: 'month',  label: 'Month' },
   { key: '3month', label: '3 Months' },
+  { key: 'custom', label: 'Custom' },
 ]
 
-function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange }: {
+function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange, customRange, onCustomApply }: {
   slug: string
   statsData: MemberStatsResponse | null
   loading: boolean
   interval: StatsInterval
   onIntervalChange: (iv: StatsInterval) => void
+  customRange: { start: string; end: string }
+  onCustomApply: (range: { start: string; end: string }) => void
 }) {
+  const [localStart, setLocalStart] = useState(customRange.start)
+  const [localEnd, setLocalEnd]     = useState(customRange.end)
+
   const th: React.CSSProperties = {
     fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 700,
     color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em',
@@ -333,7 +339,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
             Attendance
           </em>
         </h2>
-        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
           {STATS_INTERVALS.map((iv) => (
             <button
               key={iv.key}
@@ -355,6 +361,83 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
           ))}
         </div>
       </div>
+
+      {/* Custom date range row */}
+      {interval === 'custom' && (
+        <div style={{
+          padding: '12px 16px', borderBottom: '1px solid var(--border)',
+          background: 'var(--surface-0)',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', gap: '12px', flexWrap: 'wrap',
+        }}>
+          {/* From */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '10px', fontWeight: 700,
+              color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em',
+            }}>
+              From
+            </label>
+            <input
+              type="date"
+              value={localStart}
+              onChange={(e) => setLocalStart(e.target.value)}
+              style={{
+                height: '34px', padding: '0 10px',
+                border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
+                fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                background: 'var(--surface-1)', color: 'var(--text-primary)',
+                outline: 'none', minWidth: '140px',
+              }}
+            />
+          </div>
+
+          {/* Arrow separator */}
+          <div style={{
+            height: '34px', display: 'flex', alignItems: 'center',
+            color: 'var(--text-muted)', fontSize: '16px', paddingBottom: '0',
+          }}>→</div>
+
+          {/* To */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '10px', fontWeight: 700,
+              color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em',
+            }}>
+              To
+            </label>
+            <input
+              type="date"
+              value={localEnd}
+              onChange={(e) => setLocalEnd(e.target.value)}
+              style={{
+                height: '34px', padding: '0 10px',
+                border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
+                fontSize: '13px', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                background: 'var(--surface-1)', color: 'var(--text-primary)',
+                outline: 'none', minWidth: '140px',
+              }}
+            />
+          </div>
+
+          {/* Apply */}
+          <button
+            type="button"
+            onClick={() => { if (localStart && localEnd) onCustomApply({ start: localStart, end: localEnd }) }}
+            disabled={!localStart || !localEnd}
+            style={{
+              height: '34px', padding: '0 20px',
+              background: localStart && localEnd ? 'var(--brand)' : 'var(--surface-2)',
+              color: localStart && localEnd ? '#fff' : 'var(--text-muted)',
+              border: 'none', borderRadius: 'var(--radius-md)',
+              fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600,
+              cursor: localStart && localEnd ? 'pointer' : 'not-allowed',
+              transition: 'background 0.15s',
+            }}
+          >
+            Apply
+          </button>
+        </div>
+      )}
 
       <div className="dash-table-scroll"><div className="dash-table-min">
       <div style={{
@@ -723,6 +806,7 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
   const [statsInterval, setStatsInterval] = useState<StatsInterval>('month')
   const [statsData, setStatsData] = useState<MemberStatsResponse | null>(null)
   const [statsLoading, setStatsLoading] = useState(true)
+  const [customRange, setCustomRange] = useState({ start: '', end: '' })
 
 
   const fetchDash = useCallback(async () => {
@@ -745,17 +829,23 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
     fetchTodayHourly()
   }, [slug])
 
-  const fetchStats = useCallback(async (iv: StatsInterval) => {
+  const fetchStats = useCallback(async (iv: StatsInterval, custom?: { start: string; end: string }) => {
     setStatsLoading(true)
     try {
-      const res = await fetch(`/api/ws/${slug}/member-stats?interval=${iv}`)
+      let url = `/api/ws/${slug}/member-stats?interval=${iv}`
+      if (iv === 'custom' && custom?.start && custom?.end) {
+        url += `&start=${custom.start}&end=${custom.end}`
+      }
+      const res = await fetch(url)
       if (res.ok) setStatsData(await res.json())
     } finally {
       setStatsLoading(false)
     }
   }, [slug])
 
-  useEffect(() => { fetchStats(statsInterval) }, [fetchStats, statsInterval])
+  useEffect(() => {
+    if (statsInterval !== 'custom') fetchStats(statsInterval)
+  }, [fetchStats, statsInterval])
 
   useEffect(() => {
     async function fetchRealtime() {
@@ -840,8 +930,8 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
           className="dash-stat-card"
           title="In Office"
           value={counts.office}
-          sub="via Wi-Fi or GPS"
-          onClick={() => setModal({ title: 'In Office', members: (data?.all_members ?? []).filter(m => m.presence_status !== 'notIn' && (m.latest_event?.matched_by === 'wifi' || m.latest_event?.matched_by === 'gps')) })}
+          sub="currently in office"
+          onClick={() => setModal({ title: 'In Office', members: (data?.all_members ?? []).filter(m => m.presence_status === 'present' && m.latest_event?.event_type !== 'remote_checkin' && m.latest_event?.matched_by !== 'unverified') })}
           icon={<Monitor size={16} />}
         />
         <StatCard
@@ -849,7 +939,7 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
           title="Remote"
           value={counts.remote}
           sub="working remotely"
-          onClick={() => setModal({ title: 'Remote', members: (data?.all_members ?? []).filter(m => m.presence_status !== 'notIn' && m.latest_event?.matched_by !== 'wifi' && m.latest_event?.matched_by !== 'gps') })}
+          onClick={() => setModal({ title: 'Remote', members: (data?.all_members ?? []).filter(m => m.presence_status === 'present' && (m.latest_event?.event_type === 'remote_checkin' || m.latest_event?.matched_by === 'unverified')) })}
           icon={<Home size={16} />}
         />
       </div>
@@ -923,6 +1013,11 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
           loading={statsLoading}
           interval={statsInterval}
           onIntervalChange={setStatsInterval}
+          customRange={customRange}
+          onCustomApply={(range) => {
+            setCustomRange(range)
+            fetchStats('custom', range)
+          }}
         />
       </div>
 

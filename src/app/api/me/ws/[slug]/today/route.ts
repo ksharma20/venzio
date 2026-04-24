@@ -11,6 +11,7 @@ export interface MemberTodaySummary {
   email: string
   presence_status: 'present' | 'visited' | 'notIn'
   matched_by: MatchedBy | null
+  event_type: string | null
   checkin_at: string | null
   checkout_at: string | null
   duration_hours: number | null
@@ -82,6 +83,7 @@ export async function GET(
       email: m.email,
       presence_status,
       matched_by: latest?.matched_by ?? null,
+      event_type: latest?.event_type ?? null,
       checkin_at: latest?.checkin_at ?? null,
       checkout_at: latest?.checkout_at ?? null,
       duration_hours,

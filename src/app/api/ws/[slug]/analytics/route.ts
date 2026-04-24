@@ -107,7 +107,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     endDate: endDate + 'T23:59:59Z',
   })
 
-  const signals_configured = allEvents.some((e) => e.matched_by !== 'none' && e.matched_by !== undefined)
+  const signals_configured = allEvents.some((e) => e.matched_by !== 'none')
 
   // Group events by userId → by day
   const byUser = new Map<string, typeof allEvents>()
