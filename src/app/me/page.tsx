@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getServerUser } from '@/lib/auth'
 import { getOpenEventToday, getUserEvents } from '@/lib/db/queries/events'
 import { getUserWorkspaces, getWorkspacesByIds } from '@/lib/db/queries/workspaces'
@@ -199,66 +200,44 @@ export default async function MePage() {
             const ws = wsMap.get(m.workspace_id)
             if (!ws) return null
             return (
-              <div
+              <Link
                 key={m.id}
+                href={`/me/ws/${ws.slug}`}
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
                   background: 'var(--surface-0)',
                   border: '1px solid var(--border)',
                   borderRadius: 'var(--radius-md)',
                   padding: '12px 14px',
                   marginBottom: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
                 }}
+                className="ws-card-link"
               >
                 <div>
-                  <div
-                    style={{
-                      fontFamily: 'Plus Jakarta Sans, sans-serif',
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      color: 'var(--text-primary)',
-                    }}
-                  >
+                  <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 600, fontSize: '14px', color: 'var(--text-primary)' }}>
                     {ws.name}
                   </div>
-                  <div
-                    style={{
-                      fontFamily: 'Plus Jakarta Sans, sans-serif',
-                      fontSize: '12px',
-                      color: 'var(--text-muted)',
-                    }}
-                  >
+                  <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
                     {m.role}
                   </div>
                 </div>
-                <div
-                  style={{
-                    marginLeft: 'auto',
-                    textAlign: 'right',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: 'Playfair Display, serif',
-                      fontWeight: 700,
-                      fontSize: '18px',
-                      color: 'var(--navy)',
-                    }}
-                  >
-                    {wfoDays + wfhDays}
+                <div style={{ marginLeft: 'auto', textAlign: 'right', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '18px', color: 'var(--navy)' }}>
+                      {wfoDays + wfhDays}
+                    </div>
+                    <div style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', color: 'var(--text-muted)' }}>
+                      days this month
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontFamily: 'Plus Jakarta Sans, sans-serif',
-                      fontSize: '11px',
-                      color: 'var(--text-muted)',
-                    }}
-                  >
-                    days this month
-                  </div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </div>
-              </div>
+              </Link>
             )
           })}
         </section>

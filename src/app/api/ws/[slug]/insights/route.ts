@@ -3,6 +3,8 @@ import { requireWsAdmin } from '@/lib/ws-admin'
 import { getActiveMemberIds } from '@/lib/db/queries/workspaces'
 import { queryWorkspaceEvents } from '@/lib/signals'
 
+export const dynamic = 'force-dynamic'
+
 interface Props { params: Promise<{ slug: string }> }
 
 export type InsightInterval = 'today' | 'week' | 'month' | '3month' | '6month' | 'year'
@@ -114,10 +116,13 @@ export async function GET(request: NextRequest, { params }: Props) {
           // Checked in after this bucket — not present yet
           if (cinDate > localToday || (cinDate === localToday && cinH > bucketH)) return false
 
-          // Still active (no checkout) — present in all hours from check-in through now
+          // Current hour: only count people still checked in right now
+          if (bucketH === nowLocalH) return !coutDt
+
+          // Past hours: still active (no checkout) — present through now
           if (!coutDt) return true
 
-          // Checked out — present only if checkout is in this hour or later
+          // Past hours: checked out — present only if checkout was in this hour or later
           const coutDate = localDateStr(coutDt)
           const coutH = localHour(coutDt)
           return coutDate > localToday || (coutDate === localToday && coutH >= bucketH)
@@ -291,5 +296,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     total_hours: total_hours_period,
   }
 
-  return NextResponse.json(response)
+  return NextResponse.json(response, {
+    headers: { 'Cache-Control': 'no-store' },
+  })
 }

@@ -308,6 +308,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
 }) {
   const [localStart, setLocalStart] = useState(customRange.start)
   const [localEnd, setLocalEnd]     = useState(customRange.end)
+  const [search, setSearch] = useState('')
 
   const th: React.CSSProperties = {
     fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '11px', fontWeight: 700,
@@ -318,7 +319,13 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
     backgroundSize: '600px 100%', animation: 'shimmer 1.4s ease-in-out infinite', borderRadius: '5px',
   }
 
-  const members = statsData?.members ?? []
+  const allMembers = statsData?.members ?? []
+  const members = search.trim()
+    ? allMembers.filter((m) => {
+        const q = search.toLowerCase()
+        return (m.full_name ?? '').toLowerCase().includes(q) || m.email.toLowerCase().includes(q)
+      })
+    : allMembers
   const totalDays = statsData?.total_working_days ?? 1
 
   return (
@@ -339,26 +346,41 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
             Attendance
           </em>
         </h2>
-        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
-          {STATS_INTERVALS.map((iv) => (
-            <button
-              key={iv.key}
-              type="button"
-              onClick={() => onIntervalChange(iv.key)}
-              style={{
-                height: '30px', padding: '0 12px',
-                background: interval === iv.key ? 'var(--brand)' : 'var(--surface-0)',
-                color: interval === iv.key ? '#fff' : 'var(--text-secondary)',
-                border: `1px solid ${interval === iv.key ? 'var(--brand)' : 'var(--border)'}`,
-                borderRadius: 'var(--radius-md)',
-                fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif',
-                fontWeight: interval === iv.key ? 600 : 400,
-                cursor: 'pointer', transition: 'background 0.15s',
-              }}
-            >
-              {iv.label}
-            </button>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <input
+            type="search"
+            placeholder="Search by name or email…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              height: '30px', padding: '0 10px',
+              border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
+              fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif',
+              background: 'var(--surface-1)', color: 'var(--text-primary)',
+              outline: 'none', width: '200px',
+            }}
+          />
+          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
+            {STATS_INTERVALS.map((iv) => (
+              <button
+                key={iv.key}
+                type="button"
+                onClick={() => onIntervalChange(iv.key)}
+                style={{
+                  height: '30px', padding: '0 12px',
+                  background: interval === iv.key ? 'var(--brand)' : 'var(--surface-0)',
+                  color: interval === iv.key ? '#fff' : 'var(--text-secondary)',
+                  border: `1px solid ${interval === iv.key ? 'var(--brand)' : 'var(--border)'}`,
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: '12px', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  fontWeight: interval === iv.key ? 600 : 400,
+                  cursor: 'pointer', transition: 'background 0.15s',
+                }}
+              >
+                {iv.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -481,7 +503,7 @@ function MemberStatsTable({ slug, statsData, loading, interval, onIntervalChange
       ) : members.length === 0 ? (
         <div style={{ padding: '48px 24px', textAlign: 'center' }}>
           <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>
-            No attendance data for this period.
+            {search.trim() ? 'No members match your search.' : 'No attendance data for this period.'}
           </p>
         </div>
       ) : (
@@ -828,7 +850,7 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
   const fetchTodayHourly = useCallback(async (isSilent = false) => {
     if (!isSilent) setTodayHourlyLoading(true)
     try {
-      const res = await fetch(`/api/ws/${slug}/insights?interval=today`)
+      const res = await fetch(`/api/ws/${slug}/insights?interval=today`, { cache: 'no-store' })
       if (res.ok) setTodayHourlyData(await res.json())
     } finally {
       if (!isSilent) setTodayHourlyLoading(false)
@@ -859,11 +881,12 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
 
   useEffect(() => {
     refreshAll()
-    const id = setInterval(() => {
-      fetchDash(true)
-      fetchTodayHourly(true)
-    }, 30000) // Poll every 30s
-    return () => clearInterval(id)
+    const dashId = setInterval(() => fetchDash(true), 30000)
+    const graphId = setInterval(() => fetchTodayHourly(true), 10000)
+    return () => {
+      clearInterval(dashId)
+      clearInterval(graphId)
+    }
   }, [refreshAll, fetchDash, fetchTodayHourly])
 
   useEffect(() => {
