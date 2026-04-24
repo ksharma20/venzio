@@ -21,6 +21,8 @@ export interface InsightsResponse {
   total_members: number
   peak_bucket: string | null   // key of the highest unique_users bucket
   avg_daily_users: number
+  total_checkins: number
+  total_hours: number
 }
 
 /** Zero-pad to 2 digits */
@@ -216,6 +218,21 @@ export async function GET(request: NextRequest, { params }: Props) {
     endDate,
   })
 
+  const tz = ctx.workspace.display_timezone || 'UTC'
+  const localToday = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
+
+  // Calculate true period totals (not summed from buckets)
+  // For 'today', we only count events that started today in workspace TZ
+  const periodEvents = interval === 'today'
+    ? events.filter(ev => {
+        const cinDt = new Date(ev.checkin_at.includes('T') ? ev.checkin_at : ev.checkin_at.replace(' ', 'T') + 'Z')
+        return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(cinDt) === localToday
+      })
+    : events
+
+  const total_checkins_period = periodEvents.length
+  const total_hours_period = sessionHours(periodEvents)
+
   const total_members = (await getActiveMemberIds(ctx.workspace.id)).length
 
   // Build buckets
@@ -233,8 +250,11 @@ export async function GET(request: NextRequest, { params }: Props) {
         label: def.label,
         key: def.key,
         unique_users: new Set(present.map((e) => e.user_id)).size,
-        total_checkins: present.length,
-        total_hours: sessionHours(present),
+        // For hourly buckets, only count check-ins that actually HAPPENED in this hour
+        // and hours from sessions that STARTED in this hour.
+        // This avoids double-counting when summing buckets (though we now pass totals separately).
+        total_checkins: events.filter(ev => def.match(new Date(ev.checkin_at.includes('T') ? ev.checkin_at : ev.checkin_at.replace(' ', 'T') + 'Z'))).length,
+        total_hours: sessionHours(events.filter(ev => def.match(new Date(ev.checkin_at.includes('T') ? ev.checkin_at : ev.checkin_at.replace(' ', 'T') + 'Z')))),
       }
     }
 
@@ -267,6 +287,8 @@ export async function GET(request: NextRequest, { params }: Props) {
     total_members,
     peak_bucket: maxBucket?.unique_users ? maxBucket.key : null,
     avg_daily_users,
+    total_checkins: total_checkins_period,
+    total_hours: total_hours_period,
   }
 
   return NextResponse.json(response)

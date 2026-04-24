@@ -209,8 +209,8 @@ export default function InsightsClient({ slug }: Props) {
   useEffect(() => { fetchData(interval) }, [fetchData, interval])
 
   // Derived stats
-  const totalCheckins = data?.buckets.reduce((s, b) => s + b.total_checkins, 0) ?? 0
-  const totalHours = data?.buckets.reduce((s, b) => s + b.total_hours, 0) ?? 0
+  const totalCheckins = data?.total_checkins ?? 0
+  const totalHours = data?.total_hours ?? 0
   const peakBucket = data?.buckets.find((b) => b.key === data.peak_bucket)
   const presentBuckets = data?.buckets.filter((b) => b.unique_users > 0).length ?? 0
 
