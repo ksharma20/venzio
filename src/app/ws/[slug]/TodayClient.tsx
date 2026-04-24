@@ -803,31 +803,45 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
   const [realtimeData, setRealtimeData] = useState<RealtimeResponse | null>(null)
   const [realtimeLoading, setRealtimeLoading] = useState(true)
 
+  const [dashLoading, setDashLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+
   const [statsInterval, setStatsInterval] = useState<StatsInterval>('month')
   const [statsData, setStatsData] = useState<MemberStatsResponse | null>(null)
   const [statsLoading, setStatsLoading] = useState(true)
   const [customRange, setCustomRange] = useState({ start: '', end: '' })
 
 
-  const fetchDash = useCallback(async () => {
-    const res = await fetch(`/api/ws/${slug}/dashboard?status=all&signal=all&sortBy=name&sortDir=asc&page=1&limit=500`)
-    if (res.ok) setData(await res.json())
-  }, [slug])
-
-  useEffect(() => { fetchDash() }, [fetchDash])
-
-  useEffect(() => {
-    async function fetchTodayHourly() {
-      setTodayHourlyLoading(true)
-      try {
-        const res = await fetch(`/api/ws/${slug}/insights?interval=today`)
-        if (res.ok) setTodayHourlyData(await res.json())
-      } finally {
-        setTodayHourlyLoading(false)
+  const fetchDash = useCallback(async (isSilent = false) => {
+    if (!isSilent) setDashLoading(true)
+    try {
+      const res = await fetch(`/api/ws/${slug}/dashboard?status=all&signal=all&sortBy=name&sortDir=asc&page=1&limit=500`)
+      if (res.ok) {
+        setData(await res.json())
+        setLastUpdated(new Date())
       }
+    } finally {
+      if (!isSilent) setDashLoading(false)
     }
-    fetchTodayHourly()
   }, [slug])
+
+  const fetchTodayHourly = useCallback(async (isSilent = false) => {
+    if (!isSilent) setTodayHourlyLoading(true)
+    try {
+      const res = await fetch(`/api/ws/${slug}/insights?interval=today`)
+      if (res.ok) setTodayHourlyData(await res.json())
+    } finally {
+      if (!isSilent) setTodayHourlyLoading(false)
+    }
+  }, [slug])
+
+  const refreshAll = useCallback(async () => {
+    await Promise.all([
+      fetchDash(),
+      fetchTodayHourly(),
+      // fetchStats(statsInterval), // maybe too heavy for auto-poll
+    ])
+  }, [fetchDash, fetchTodayHourly])
 
   const fetchStats = useCallback(async (iv: StatsInterval, custom?: { start: string; end: string }) => {
     setStatsLoading(true)
@@ -844,8 +858,13 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
   }, [slug])
 
   useEffect(() => {
-    if (statsInterval !== 'custom') fetchStats(statsInterval)
-  }, [fetchStats, statsInterval])
+    refreshAll()
+    const id = setInterval(() => {
+      fetchDash(true)
+      fetchTodayHourly(true)
+    }, 30000) // Poll every 30s
+    return () => clearInterval(id)
+  }, [refreshAll, fetchDash, fetchTodayHourly])
 
   useEffect(() => {
     async function fetchRealtime() {
@@ -867,7 +886,7 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
 
   return (
     <div className="dash-page" style={{ padding: '24px', minHeight: '100%' }}>
-      {/* Export button */}
+      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div>
           <h1 style={{
@@ -878,40 +897,63 @@ export default function TodayClient({ slug, planLimitBanner }: Props) {
           </h1>
           <span style={{
             fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px',
-            color: 'var(--text-muted)', marginTop: '2px', display: 'block',
+            color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px'
           }}>
             Dashboard
+            {lastUpdated && (
+              <>
+                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--border)' }} />
+                Updated {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </>
+            )}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={async () => {
-            const now = new Date()
-            const y = now.getFullYear()
-            const m = String(now.getMonth() + 1).padStart(2, '0')
-            const start = `${y}-${m}-01`
-            const lastDay = new Date(y, now.getMonth() + 1, 0).getDate()
-            const end = `${y}-${m}-${String(lastDay).padStart(2, '0')}`
-            const res = await fetch(`/api/ws/${slug}/export?start=${start}&end=${end}`)
-            if (!res.ok) { alert((await res.json().catch(() => ({}))).error ?? 'Export failed'); return }
-            const blob = await res.blob()
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url; a.download = `report-${slug}-${y}-${m}.csv`
-            document.body.appendChild(a); a.click(); document.body.removeChild(a)
-            URL.revokeObjectURL(url)
-          }}
-          style={{
-            height: '40px', padding: '0 20px',
-            background: 'var(--brand)', color: '#fff',
-            border: 'none', borderRadius: 'var(--radius-md)',
-            fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 600,
-            cursor: 'pointer', whiteSpace: 'nowrap',
-            boxShadow: '0 2px 8px color-mix(in srgb, var(--brand) 35%, transparent)',
-          }}
-        >
-          Export Report
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            type="button"
+            onClick={refreshAll}
+            disabled={dashLoading || todayHourlyLoading}
+            style={{
+              height: '40px', padding: '0 16px',
+              background: 'var(--surface-0)', color: 'var(--text-primary)',
+              border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 600,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+            }}
+          >
+            <Activity size={14} className={dashLoading ? 'animate-spin' : ''} />
+            {dashLoading ? 'Refreshing...' : 'Refresh'}
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              const now = new Date()
+              const y = now.getFullYear()
+              const m = String(now.getMonth() + 1).padStart(2, '0')
+              const start = `${y}-${m}-01`
+              const lastDay = new Date(y, now.getMonth() + 1, 0).getDate()
+              const end = `${y}-${m}-${String(lastDay).padStart(2, '0')}`
+              const res = await fetch(`/api/ws/${slug}/export?start=${start}&end=${end}`)
+              if (!res.ok) { alert((await res.json().catch(() => ({}))).error ?? 'Export failed'); return }
+              const blob = await res.blob()
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url; a.download = `report-${slug}-${y}-${m}.csv`
+              document.body.appendChild(a); a.click(); document.body.removeChild(a)
+              URL.revokeObjectURL(url)
+            }}
+            style={{
+              height: '40px', padding: '0 20px',
+              background: 'var(--brand)', color: '#fff',
+              border: 'none', borderRadius: 'var(--radius-md)',
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '13px', fontWeight: 600,
+              cursor: 'pointer', whiteSpace: 'nowrap',
+              boxShadow: '0 2px 8px color-mix(in srgb, var(--brand) 35%, transparent)',
+            }}
+          >
+            Export Report
+          </button>
+        </div>
       </div>
 
       {planLimitBanner}
