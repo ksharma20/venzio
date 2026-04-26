@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useIsLoggedIn } from '@/hooks/useIsLoggedIn';
+
 import Image from 'next/image'
 import { en } from '@/locales/en'
 import { startProgress, stopProgress } from '@/components/shared/TopProgressBar'
@@ -1087,6 +1089,14 @@ function LoginFlow() {
   const searchParams = useSearchParams()
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
+
+  const isLoggedIn = useIsLoggedIn();
+  useEffect(() => {
+     if (isLoggedIn) {
+      router.replace('/me');
+      return;
+    }
+  },[isLoggedIn, router])
 
   function handleSuccess(redirect: string) {
     const invite = searchParams.get('invite')

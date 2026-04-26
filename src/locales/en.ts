@@ -81,6 +81,7 @@ export const en = {
     // ── Auth cookies ──────────────────────────────────────────────────────────
     cookieSession:        'vnz_session',
     cookieOtp:            'vnz_otp_ok',
+    cookieUI:             'vnz_ui',
 
     // ── Domain verification ───────────────────────────────────────────────────
     // DNS TXT: _venzio-verify.{domain}  IN TXT  "venzio-verify={token}"
