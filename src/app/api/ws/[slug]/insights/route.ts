@@ -73,7 +73,7 @@ export async function GET(request: NextRequest, { params }: Props) {
     // When set, use presence-based counting (session spans the bucket window)
     matchPresence?: (cinDt: Date, coutDt: Date | null) => boolean
   }
-  let bucketDefs: BucketDef[] = []
+  const bucketDefs: BucketDef[] = []
 
   if (interval === 'today') {
     const tz = ctx.workspace.display_timezone || 'UTC'
@@ -218,10 +218,16 @@ export async function GET(request: NextRequest, { params }: Props) {
   }
 
   // Fetch events using queryWorkspaceEvents (applies plan + signal matching)
-  const events = await queryWorkspaceEvents(ctx.workspace.id, ctx.workspace.plan, {
+  const allEvents = await queryWorkspaceEvents(ctx.workspace.id, ctx.workspace.plan, {
     startDate,
     endDate,
   })
+
+  // Only count events that are truly "in office" — same logic as the dashboard tile:
+  // exclude remote_checkin and any office_checkin that failed signal matching (unverified)
+  const events = allEvents.filter(
+    (ev) => ev.event_type !== 'remote_checkin' && ev.matched_by !== 'unverified'
+  )
 
   const tz = ctx.workspace.display_timezone || 'UTC'
   const localToday = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)

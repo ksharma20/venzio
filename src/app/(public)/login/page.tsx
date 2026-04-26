@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { en } from '@/locales/en'
+import { startProgress, stopProgress } from '@/components/shared/TopProgressBar'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -182,6 +183,7 @@ function EmailStep({
     }
     setLoading(true)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/auth/check-email', {
         method: 'POST',
@@ -210,6 +212,7 @@ function EmailStep({
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+      stopProgress()
     }
   }
 
@@ -294,6 +297,7 @@ function PasswordStep({
     }
     setLoading(true)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -310,6 +314,7 @@ function PasswordStep({
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+      stopProgress()
     }
   }
 
@@ -375,6 +380,7 @@ function DeactivatedStep({
     if (!password) { setError('Please enter your password'); return }
     setLoading(true)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/me/reactivate', {
         method: 'POST',
@@ -391,6 +397,7 @@ function DeactivatedStep({
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+      stopProgress()
     }
   }
 
@@ -460,6 +467,7 @@ function OtpStep({
     }
     setLoading(true)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/auth/otp/verify', {
         method: 'POST',
@@ -476,6 +484,7 @@ function OtpStep({
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+      stopProgress()
     }
   }
 
@@ -483,6 +492,7 @@ function OtpStep({
     setResending(true)
     setResendMsg(null)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/auth/otp/send', {
         method: 'POST',
@@ -497,6 +507,7 @@ function OtpStep({
       }
     } finally {
       setResending(false)
+      stopProgress()
     }
   }
 
@@ -696,6 +707,7 @@ function PersonalSetupStep({
     if (password !== confirm) { setError('Passwords do not match'); return }
     setLoading(true)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -717,6 +729,7 @@ function PersonalSetupStep({
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+      stopProgress()
     }
   }
 
@@ -879,6 +892,7 @@ function OrgSetupStep({
     if (password !== confirm) { setError('Passwords do not match'); return }
     setLoading(true)
     setError(null)
+    startProgress()
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -903,6 +917,7 @@ function OrgSetupStep({
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
+      stopProgress()
     }
   }
 
