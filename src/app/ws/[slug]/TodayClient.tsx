@@ -259,7 +259,25 @@ function MembersModal({
                         </div>
                       )}
                     </div>
-                    <StatusBadge member={m} />
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
+                      <StatusBadge member={m} />
+                      {m.latest_event?.checkout_location_mismatch != null && m.latest_event.checkout_location_mismatch > 0 && (
+                        <span
+                          title={`Checked out from a different location (${Math.round(m.latest_event.checkout_location_mismatch)}m away from office). Hours may not count as in-office.`}
+                          style={{
+                            fontSize: '11px',
+                            color: 'var(--amber)',
+                            fontFamily: 'var(--font-mono, monospace)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                            cursor: 'default',
+                          }}
+                        >
+                          ⚠ Left from different location
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </Link>
               )

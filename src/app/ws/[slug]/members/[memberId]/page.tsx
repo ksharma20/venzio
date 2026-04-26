@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { fmtTime, durationLabel } from "@/lib/client/format-time";
 import type { MatchedBy } from "@/lib/signals";
+// MatchedBy is kept for the EventWithMatch type below
 
 const SIGNAL_BADGE: Record<MatchedBy, { label: string; color: string }> = {
   wifi: { label: "WiFi", color: "var(--teal)" },
@@ -40,6 +41,7 @@ interface EventWithMatch {
   checkin_at: string;
   checkout_at: string | null;
   matched_by: MatchedBy;
+  matched_signals: string[];
   trust_flags: string | null;
   checkout_location_mismatch: number | null;
   wifi_ssid: string | null;
@@ -135,7 +137,6 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
       return null;
     }
   })();
-  const badge = SIGNAL_BADGE[ev.matched_by];
   const dur = durationLabel(ev.checkin_at, ev.checkout_at);
   return (
     <div
@@ -177,20 +178,8 @@ function EventRow({ ev }: { ev: EventWithMatch }) {
             {dur}
           </span>
         )}
-        <span
-          style={{
-            marginLeft: "auto",
-            fontSize: "11px",
-            fontFamily: "Plus Jakarta Sans, sans-serif",
-            fontWeight: 600,
-            color: badge.color,
-            background: `color-mix(in srgb,${badge.color} 12%,transparent)`,
-            padding: "2px 7px",
-            borderRadius: "4px",
-            border: `1px solid ${badge.color}`,
-          }}
-        >
-          {badge.label}
+        <span style={{ marginLeft: "auto" }}>
+          <SignalBadge matchedBy={ev.matched_by} matchedSignals={ev.matched_signals} />
         </span>
         {flags && flags.length > 0 && <TrustPopover flags={flags} />}
         {ev.checkout_location_mismatch != null && (

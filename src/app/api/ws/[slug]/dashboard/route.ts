@@ -18,12 +18,14 @@ export interface DashboardMember {
     checkout_at: string | null
     matched_by: MatchedBy
     event_type: string
+    matched_signals: string[]
     trust_flags: string[]
     wifi_ssid: string | null
     ip_address: string
     gps_lat: number | null
     gps_lng: number | null
     location_label: string | null
+    checkout_location_mismatch: number | null
   } | null
   event_count: number
 }
@@ -112,12 +114,14 @@ export async function GET(
             checkout_at: latest.checkout_at,
             matched_by: latest.matched_by,
             event_type: latest.event_type,
+            matched_signals: latest.matched_signals,
             trust_flags: latest.trust_flags ? (JSON.parse(latest.trust_flags) as string[]) : [],
             wifi_ssid: latest.wifi_ssid,
             ip_address: latest.ip_address,
             gps_lat: latest.gps_lat,
             gps_lng: latest.gps_lng,
             location_label: latest.location_label,
+            checkout_location_mismatch: latest.checkout_location_mismatch ?? null,
           }
         : null,
       event_count: userEvents.length,
