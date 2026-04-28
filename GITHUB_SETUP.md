@@ -12,7 +12,7 @@ This document explains the GitHub settings for the company fork and personal OSS
 | **Contributors** | Company team (direct collaborators) | Global community (forks) |
 | **Merge Strategy** | `--no-ff` (merge commits) | `--no-ff` (merge commits) |
 | **Deployments** | Staging + Production | None (reference only) |
-| **Sync Direction** | Company → OSS (periodic, manual) | — |
+| **Sync Direction** | Company → OSS (periodic, manual) | - |
 
 ---
 
@@ -69,7 +69,7 @@ jane@company.ai → Push (can create/merge PRs)
 - **Allow squash merging:** ☐ (disabled)
 - **Allow rebase merging:** ☐ (disabled)
 
-**Why:** Same as company fork — consistent merge strategy, simpler for contributors.
+**Why:** Same as company fork - consistent merge strategy, simpler for contributors.
 
 ---
 

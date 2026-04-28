@@ -6,7 +6,7 @@ This guide is for **company developers** contributing to the company fork of Ven
 
 ## Getting Started
 
-1. **No fork needed** — You'll be added as a direct collaborator to the company repo
+1. **No fork needed** - You'll be added as a direct collaborator to the company repo
 
 2. Clone the company fork:
 
@@ -127,7 +127,7 @@ Always test on staging before merging to main:
 
 Company contributions are synced back to the personal OSS repo periodically (at your discretion).
 
-You don't need to do anything — the project maintainer handles this.
+You don't need to do anything - the project maintainer handles this.
 
 ---
 
