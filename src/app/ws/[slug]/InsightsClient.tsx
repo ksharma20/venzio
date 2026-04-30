@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { InsightInterval, InsightBucket, InsightsResponse } from '@/app/api/ws/[slug]/insights/route'
 import { fmtHours } from '@/lib/client/format-time'
 
-interface Props { slug: string }
+interface Props { slug: string; workspaceCreatedAt: string }
 
 const INTERVALS: { key: InsightInterval; label: string }[] = [
   { key: 'today',   label: 'Today' },
@@ -197,7 +197,7 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
 
 // ─── Main component ─────────────────────────────────────────────────────────────
 
-export default function InsightsClient({ slug }: Props) {
+export default function InsightsClient({ slug, workspaceCreatedAt }: Props) {
   const [interval, setInterval] = useState<InsightInterval>('month')
   const [customFrom, setCustomFrom] = useState('')
   const [customTo, setCustomTo] = useState('')
@@ -273,6 +273,7 @@ export default function InsightsClient({ slug }: Props) {
             <input
               type="date"
               value={customFrom}
+              min={workspaceCreatedAt}
               max={customTo || todayISO()}
               onChange={(e) => setCustomFrom(e.target.value)}
               style={{
@@ -287,7 +288,7 @@ export default function InsightsClient({ slug }: Props) {
             <input
               type="date"
               value={customTo}
-              min={customFrom}
+              min={workspaceCreatedAt}
               max={todayISO()}
               onChange={(e) => setCustomTo(e.target.value)}
               style={{
