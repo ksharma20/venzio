@@ -1,0 +1,104 @@
+name: Upstream company develop to OSS
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  open_oss_pr:
+    # This workflow is intended to run in the *company fork*.
+    # Guard so it doesn't run in the OSS source repo.
+    if: github.repository_owner != 'ksharma20'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Decide whether to upstream
+        id: gate
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const isManual = context.eventName === 'workflow_dispatch'
+            if (isManual) {
+              core.setOutput('should_upstream', 'true')
+              return
+            }
+
+            const pr = context.payload.pull_request
+            if (!pr) {
+              core.setFailed('No pull_request in event payload.')
+              return
+            }
+
+            if (!pr.merged) {
+              core.setOutput('should_upstream', 'false')
+              return
+            }
+
+            const labels = (pr.labels ?? []).map(l => l.name)
+            const hasSyncLabel = labels.includes('sync')
+
+            // Fully-automatic upstreaming:
+            // - Any merged PR into develop is upstreamed by default.
+            // - PRs labeled "sync" are never upstreamed (prevents echo loops).
+            const should = !hasSyncLabel
+            core.setOutput('should_upstream', should ? 'true' : 'false')
+
+      - name: Checkout company repo
+        if: steps.gate.outputs.should_upstream == 'true'
+        uses: actions/checkout@v4
+
+      - name: Configure git
+        if: steps.gate.outputs.should_upstream == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+      - name: Prepare branch for OSS PR
+        if: steps.gate.outputs.should_upstream == 'true'
+        run: |
+          git fetch origin
+          git checkout develop
+          git pull origin develop
+          git checkout -B sync/develop-to-oss-main
+          git push origin sync/develop-to-oss-main --force
+
+      - name: Open or update PR into OSS main
+        if: steps.gate.outputs.should_upstream == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.OSS_UPSTREAM_PAT }}
+          OSS_REPO: ksharma20/venzio
+        run: |
+          set -euo pipefail
+
+          FORK_OWNER="${GITHUB_REPOSITORY_OWNER}"
+          HEAD_REF="${FORK_OWNER}:sync/develop-to-oss-main"
+
+          # If a PR already exists from this head to OSS main, do nothing.
+          EXISTING_NUMBER="$(gh pr list --repo "$OSS_REPO" --head "$HEAD_REF" --base main --state open --json number --jq '.[0].number // empty')"
+          if [ -n "${EXISTING_NUMBER}" ]; then
+            echo "Existing OSS PR found: #${EXISTING_NUMBER}"
+            exit 0
+          fi
+
+          gh pr create \
+            --repo "$OSS_REPO" \
+            --base main \
+            --head "$HEAD_REF" \
+            --title "chore(upstream): sync company develop → OSS main" \
+            --body "$(cat <<'EOF'
+This PR was opened automatically from the company fork.
+
+**Why:** A PR labeled `upstream` was merged into company `develop`.
+
+Notes:
+- Sync PRs (labeled `sync`) are never upstreamed to avoid echo loops.
+- OSS `main` remains the source of truth.
+EOF
+)"
+

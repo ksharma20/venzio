@@ -7,13 +7,14 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout company repo
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Configure git
@@ -27,14 +28,41 @@ jobs:
           git remote add upstream https://github.com/ksharma20/venzio.git
           git fetch upstream
 
-      - name: Sync develop
-        run: |
-          git checkout develop || git checkout -b develop
-          git reset --hard upstream/develop
-          git push origin develop --force
-
       - name: Sync main
         run: |
           git checkout main
           git reset --hard upstream/main
           git push origin main --force
+
+      # Optional: keep `develop` current by opening a PR from `main` → `develop`.
+      # This supports the company workflow where:
+      # - `main` is mirror-only (synced from OSS)
+      # - all human PRs merge into `develop` (preview/staging)
+      - name: Prepare sync branch (main → develop)
+        id: prep_develop_pr
+        run: |
+          if git show-ref --verify --quiet refs/remotes/origin/develop; then
+            echo "has_develop=true" >> "$GITHUB_OUTPUT"
+            git fetch origin
+            git checkout -B sync/main-to-develop origin/develop
+            git merge --no-edit origin/main
+          else
+            echo "has_develop=false" >> "$GITHUB_OUTPUT"
+            echo "No origin/develop branch found. Skipping develop sync PR."
+          fi
+
+      - name: Create PR to sync main into develop
+        if: steps.prep_develop_pr.outputs.has_develop == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: develop
+          branch: sync/main-to-develop
+          title: "chore(sync): merge main into develop"
+          labels: |
+            sync
+          body: |
+            This PR keeps `develop` up to date with `main`.
+
+            - `main` is synced from OSS `main` by automation
+            - `develop` is the human PR target (preview/staging)

@@ -1,6 +1,13 @@
-# Contributing to Venzio (Company Fork)
+# Contributing to Venzio (Company Repo)
 
-This guide is for **company developers** contributing to the company fork of Venzio.
+This guide is for **company developers** working in the company repo.
+
+The key idea:
+
+- **OSS `main` is the source of truth**
+- **Company `main` is a protected mirror of OSS `main`** (no human merges)
+- **Company `develop` is the only human PR target** (preview/staging)
+- Company changes flow **Company `develop` → OSS `main` → Company `main` → Company `develop`**
 
 ---
 
@@ -24,7 +31,7 @@ npm install
 4. Migrate DB:
 
 ```bash
-node scripts/migrate.js
+npm run migrate
 ```
 
 5. Run project:
@@ -35,11 +42,27 @@ npm run dev
 
 ---
 
-## Development Workflow
+## Branch Model (Company)
+
+### `main` (mirror-only)
+- Production deploy branch
+- **No direct PRs / no human merges**
+- Updated only by the OSS sync automation (fast-forward or hard-reset mirror)
+
+### `develop` (preview/staging)
+- Preview/staging deploy branch
+- **All human PRs target `develop`**
+- Periodically updated from `main` via an automated PR (keeps it current)
+
+---
+
+## Development Workflow (Company)
 
 ### 1. Create a feature branch
 
 ```bash
+git checkout main
+git pull origin main
 git checkout -b feature/your-feature-name
 ```
 
@@ -63,34 +86,18 @@ git commit -m "Signal verification: hide location badge for unverified events
 git push origin feature/your-feature-name
 ```
 
-Then open a PR in GitHub (company fork).
+Then open a PR in GitHub (company repo).
 
 ### 4. Code review
 
 - Team reviews your PR
 - Address feedback
-- No force-pushes needed (we use merge commits, not squash)
+- Avoid force-pushes on shared branches (`main`, `develop`)
 
 ### 5. Merge
 
-- Use GitHub's "Create a merge commit" button (✓ default)
-- Branch history is preserved for auditing
-- PR is closed automatically
-
----
-
-## Merging Strategy
-
-**All PRs in company fork use merge commits (`--no-ff`).**
-
-This means:
-
-- Your branch is merged, not squashed
-- Commit history is preserved
-- You can see which commits came from which PR
-- If you need to revert, you can revert the merge commit
-
-**Why not squash?** Squash requires force-pushing your branch if you need to sync, which is confusing for contributors.
+- Merge the PR into `develop`
+- Prefer **Squash & merge** for small, focused PRs (keeps `develop` readable)
 
 ---
 
@@ -100,8 +107,8 @@ This means:
 # Fetch latest from company fork
 git fetch origin
 
-# Sync with latest main (if needed)
-git rebase origin/main
+# Keep your feature branch current (optional)
+git rebase origin/develop
 
 # Test your changes
 npm run dev
@@ -112,20 +119,45 @@ npm run build  # (optional, check for build errors)
 
 ## Deployments
 
-- **Staging:** Merges to `staging` branch auto-deploy
-- **Production:** Merges to `main` branch auto-deploy
+- **Preview/Staging:** Merges to `develop` auto-deploy
+- **Production:** `main` auto-deploy (mirror of OSS `main`)
 
-Always test on staging before merging to main:
-
-1. Merge PR to `staging` branch
-2. Verify changes on staging environment
-3. Create PR from `staging` → `main` for production release
+Production releases happen when OSS `main` is updated (see “Syncing with OSS”).
 
 ---
 
 ## Syncing with Open Source
 
-Company contributions are synced back to the personal OSS repo periodically (at your discretion).
+### Company → OSS (automatic PR)
+We use **fully-automatic upstreaming** with one exception to avoid “echo loops” from sync merges.
+
+Automation opens/updates a PR to **OSS `main`** for **any merged PR** into company `develop`,
+except PRs labeled:
+
+- `sync` (branch sync bookkeeping only)
+
+- You review/merge that PR in OSS
+- OSS `main` remains the single source of truth
+
+#### Maintainers: one-time setup (company repo)
+To enable automation in the company fork, add this secret in the **company repo**:
+
+- `OSS_UPSTREAM_PAT`: a GitHub Personal Access Token with access to the OSS repo (`ksharma20/venzio`)
+
+> Do not put tokens directly in workflow files. Anything committed to git is readable by anyone with repo access.
+
+The company repo uses the workflow template:
+
+- `.github/workflows/upstream_company_develop_to_oss.yaml`
+
+Enable GitHub Actions on the company fork, then add the secret above.
+
+### OSS → Company (automatic sync)
+When OSS `main` changes, automation syncs company `main` to match OSS `main`.
+
+### Company `main` → Company `develop` (automatic PR)
+After company `main` updates, automation opens a PR from company `main` to company `develop`
+so the preview branch stays current.
 
 You don't need to do anything - the project maintainer handles this.
 
