@@ -14,7 +14,8 @@ jobs:
   open_oss_pr:
     # This workflow is intended to run in the *company fork*.
     # Guard so it doesn't run in the OSS source repo.
-    if: github.repository_owner != 'ksharma20'
+    # Also skip unless the upstream PAT is configured in this repo.
+    if: github.repository_owner != 'ksharma20' && secrets.OSS_UPSTREAM_PAT != ''
     runs-on: ubuntu-latest
 
     steps:
@@ -91,14 +92,5 @@ jobs:
             --base main \
             --head "$HEAD_REF" \
             --title "chore(upstream): sync company develop → OSS main" \
-            --body "$(cat <<'EOF'
-This PR was opened automatically from the company fork.
-
-**Why:** A PR labeled `upstream` was merged into company `develop`.
-
-Notes:
-- Sync PRs (labeled `sync`) are never upstreamed to avoid echo loops.
-- OSS `main` remains the source of truth.
-EOF
-)"
+            --body $'This PR was opened automatically from the company fork.\n\n**Why:** A PR labeled `upstream` was merged into company `develop`.\n\nNotes:\n- Sync PRs (labeled `sync`) are never upstreamed to avoid echo loops.\n- OSS `main` remains the source of truth.\n'
 
