@@ -42,17 +42,25 @@ jobs:
         id: prep_develop_pr
         run: |
           if git show-ref --verify --quiet refs/remotes/origin/develop; then
-            echo "has_develop=true" >> "$GITHUB_OUTPUT"
             git fetch origin
             git checkout -B sync/main-to-develop origin/develop
-            git merge --no-edit origin/main
+            if git merge --no-edit origin/main; then
+              echo "has_develop=true" >> "$GITHUB_OUTPUT"
+              echo "merge_ok=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_develop=true" >> "$GITHUB_OUTPUT"
+              echo "merge_ok=false" >> "$GITHUB_OUTPUT"
+              echo "Merge conflict: cannot auto-merge origin/main into origin/develop"
+              exit 1
+            fi
           else
             echo "has_develop=false" >> "$GITHUB_OUTPUT"
+            echo "merge_ok=false" >> "$GITHUB_OUTPUT"
             echo "No origin/develop branch found. Skipping develop sync PR."
           fi
 
       - name: Create PR to sync main into develop
-        if: steps.prep_develop_pr.outputs.has_develop == 'true'
+        if: steps.prep_develop_pr.outputs.has_develop == 'true' && steps.prep_develop_pr.outputs.merge_ok == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
