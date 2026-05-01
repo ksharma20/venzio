@@ -1,0 +1,60 @@
+name: Vercel Preview (PR → develop)
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  deploy_preview:
+    # Company fork only: never run in OSS repo owned by ksharma20
+    if: github.repository_owner != 'ksharma20'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Gate (require Vercel secrets)
+        id: gate
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const ok = Boolean(process.env.VERCEL_TOKEN && process.env.VERCEL_ORG_ID && process.env.VERCEL_PROJECT_ID)
+            core.setOutput('ok', ok ? 'true' : 'false')
+
+      - name: Checkout
+        if: steps.gate.outputs.ok == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        if: steps.gate.outputs.ok == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.gate.outputs.ok == 'true'
+        run: npm ci
+
+      - name: Install Vercel CLI
+        if: steps.gate.outputs.ok == 'true'
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment (preview)
+        if: steps.gate.outputs.ok == 'true'
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build (Vercel Build Output)
+        if: steps.gate.outputs.ok == 'true'
+        run: vercel build --token="$VERCEL_TOKEN"
+
+      - name: Deploy prebuilt to Vercel (preview)
+        if: steps.gate.outputs.ok == 'true'
+        run: vercel deploy --prebuilt --token="$VERCEL_TOKEN"
+
