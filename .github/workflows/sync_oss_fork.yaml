@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   sync:
+    # Company fork only: never run in OSS repo owned by ksharma20
+    if: github.repository_owner != 'ksharma20'
     runs-on: ubuntu-latest
 
     steps:

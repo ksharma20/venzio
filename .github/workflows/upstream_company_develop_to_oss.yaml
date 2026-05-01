@@ -14,9 +14,13 @@ jobs:
   open_oss_pr:
     # This workflow is intended to run in the *company fork*.
     # Guard so it doesn't run in the OSS source repo.
-    # Also skip unless the upstream PAT is configured in this repo.
-    if: github.repository_owner != 'ksharma20' && secrets.OSS_UPSTREAM_PAT != ''
+    #
+    # NOTE: GitHub Actions does not allow `secrets` (or `env`) in `jobs.<job>.if`.
+    # We gate on secret presence inside the first step instead.
+    if: github.repository_owner != 'ksharma20'
     runs-on: ubuntu-latest
+    env:
+      OSS_UPSTREAM_PAT: ${{ secrets.OSS_UPSTREAM_PAT }}
 
     steps:
       - name: Decide whether to upstream
@@ -24,6 +28,10 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            if (!process.env.OSS_UPSTREAM_PAT) {
+              core.setOutput('should_upstream', 'false')
+              return
+            }
             const isManual = context.eventName === 'workflow_dispatch'
             if (isManual) {
               core.setOutput('should_upstream', 'true')
