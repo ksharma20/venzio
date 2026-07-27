@@ -271,9 +271,14 @@ export const en = {
     restoreConfirmBtn: "Confirm restore",
     archiveError: "Archive failed",
     restoreError: "Restore failed",
-    // Session
-    sessionTitle: "Session",
-    signOutBtn: "Sign out",
+  },
+
+  /** Workspace admin sidebar shell (src/components/ws/WsSidebar.tsx) */
+  wsSidebar: {
+    signOutTitle: "Sign out?",
+    signOutBody: "You'll be returned to the login screen and will need to sign in again to access this workspace.",
+    cancelBtn: "Cancel",
+    signOutConfirmBtn: "Sign out",
     signingOutBtn: "Signing out…",
   },
 

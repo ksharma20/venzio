@@ -349,6 +349,15 @@ export async function hasOverlappingLeaveRequest(
   return (row?.cnt ?? 0) > 0
 }
 
+export async function getPendingLeaveCount(workspaceId: string): Promise<number> {
+  const row = await db.queryOne<{ cnt: number }>(
+    `SELECT COUNT(*) AS cnt FROM leave_requests
+     WHERE workspace_id = ? AND status = 'pending'`,
+    [workspaceId],
+  )
+  return row?.cnt ?? 0
+}
+
 export async function getLeaveRequestsInRange(
   workspaceId: string,
   startDate: string,
