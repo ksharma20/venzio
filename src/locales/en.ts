@@ -310,6 +310,25 @@ export const en = {
     loadingMore: "Loading more…",
   },
 
+  wsOverview: {
+    greeting: "Good morning",
+    subtitlePendingSingular: "1 item needs your attention",
+    subtitlePendingPlural: "{count} items need your attention",
+    subtitleAllClear: "All caught up",
+    onLeaveTitle: "On leave today",
+    onLeaveSub: "away from the office",
+    pendingApprovalsTitle: "Pending leave requests",
+    pendingApprovalsEmpty: "No leave requests waiting on you.",
+    reviewAction: "Review",
+    departmentTitle: "Headcount by department",
+    recentActivityTitle: "Recent activity",
+    recentActivityEmpty: "No check-ins yet today.",
+    celebrationsTitle: "Upcoming celebrations",
+    celebrationsEmpty: "Nothing in the next two weeks.",
+    birthdayLabel: "Birthday",
+    anniversaryLabel: "work anniversary",
+  },
+
   /** /ws/:slug/members/:userId member timeline */
   wsMemberTimeline: {
     viewMore: "View more",
