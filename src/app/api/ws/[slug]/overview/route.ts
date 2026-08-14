@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWsAdmin } from '@/lib/ws-admin'
 import { todayInTz } from '@/lib/timezone'
-import { getMembersOnLeaveToday, getPendingLeaveRequests, type PendingLeaveSummary } from '@/lib/db/queries/leaves'
+import { getMembersOnLeaveToday } from '@/lib/db/queries/leaves'
+import { getPendingApprovalItems, type ApprovalItem } from '@/lib/approvals'
 import {
   getDepartmentBreakdown,
   getUpcomingCelebrations,
@@ -11,7 +12,8 @@ import {
 
 export interface OverviewWidgetsResponse {
   onLeaveToday: number
-  pendingLeaveRequests: PendingLeaveSummary[]
+  pendingApprovals: ApprovalItem[]
+  pendingApprovalsTotal: number
   departmentBreakdown: DepartmentBreakdown[]
   celebrations: UpcomingCelebration[]
 }
@@ -27,16 +29,17 @@ export async function GET(req: NextRequest, { params }: Props) {
 
   const today = todayInTz(ctx.workspace.display_timezone)
 
-  const [onLeaveMembers, pendingLeaveRequests, departmentBreakdown, celebrations] = await Promise.all([
+  const [onLeaveMembers, approvals, departmentBreakdown, celebrations] = await Promise.all([
     getMembersOnLeaveToday(ctx.workspace.id, today),
-    ctx.workspace.leaves_enabled ? getPendingLeaveRequests(ctx.workspace.id, 5) : Promise.resolve([]),
+    getPendingApprovalItems(ctx.workspace.id, { leavesEnabled: !!ctx.workspace.leaves_enabled }),
     getDepartmentBreakdown(ctx.workspace.id),
     getUpcomingCelebrations(ctx.workspace.id, today, 14),
   ])
 
   return NextResponse.json({
     onLeaveToday: onLeaveMembers.length,
-    pendingLeaveRequests,
+    pendingApprovals: approvals.items.slice(0, 5),
+    pendingApprovalsTotal: approvals.items.length,
     departmentBreakdown,
     celebrations,
   } satisfies OverviewWidgetsResponse)

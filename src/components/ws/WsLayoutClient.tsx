@@ -14,13 +14,14 @@ interface Props {
   workspaceName: string
   memberCount: number | null
   pendingLeaveCount: number
+  pendingApprovalsCount: number
   userName: string
   userRole: string
   children: React.ReactNode
 }
 
 export default function WsLayoutClient({
-  slug, leavesEnabled, workspaceName, memberCount, pendingLeaveCount, userName, userRole, children,
+  slug, leavesEnabled, workspaceName, memberCount, pendingLeaveCount, pendingApprovalsCount, userName, userRole, children,
 }: Props) {
   const [panelOpen, setPanelOpen] = useState(false)
   const [todayLabel, setTodayLabel] = useState<string | null>(null)
@@ -36,6 +37,7 @@ export default function WsLayoutClient({
         slug={slug}
         leavesEnabled={leavesEnabled}
         pendingLeaveCount={pendingLeaveCount}
+        pendingApprovalsCount={pendingApprovalsCount}
         userName={userName}
         userRole={userRole}
       />

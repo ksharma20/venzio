@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import {
-  LayoutDashboard, Users, BarChart2, Calendar, CalendarDays, CalendarOff, Bell,
+  LayoutDashboard, Users, BarChart2, Calendar, CalendarDays, CalendarOff, ClipboardCheck,
   FileText, SlidersHorizontal, PanelLeftOpen, PanelLeftClose, LayoutGrid, User, LogOut,
   ChevronDown,
 } from 'lucide-react'
@@ -39,7 +39,7 @@ const NAV_GROUPS: NavGroup[] = [
           { label: 'Applied leaves', path: '/leaves' },
         ],
       },
-      { path: '/disputes',  label: 'Alerts',    icon: <Bell size={18} />,            feature: null },
+      { path: '/approvals', label: 'Approvals', icon: <ClipboardCheck size={18} />,   feature: null },
     ],
   },
   {
@@ -55,6 +55,7 @@ interface Props {
   slug: string
   leavesEnabled: boolean
   pendingLeaveCount: number
+  pendingApprovalsCount: number
   userName: string
   userRole: string
 }
@@ -70,7 +71,7 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
-export default function WsSidebar({ slug, leavesEnabled, pendingLeaveCount, userName, userRole }: Props) {
+export default function WsSidebar({ slug, leavesEnabled, pendingLeaveCount, pendingApprovalsCount, userName, userRole }: Props) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -203,7 +204,8 @@ export default function WsSidebar({ slug, leavesEnabled, pendingLeaveCount, user
                   ? pathname === href
                   : pathname === href || pathname.startsWith(href + '/')
                 const hasSubItems = !!subItems && subItems.length > 0 && !collapsed
-                const showBadge = label === 'Leave' && pendingLeaveCount > 0
+                const badgeCount = label === 'Leave' ? pendingLeaveCount : label === 'Approvals' ? pendingApprovalsCount : 0
+                const showBadge = badgeCount > 0
 
                 const rowContent = (
                   <>
@@ -218,7 +220,7 @@ export default function WsSidebar({ slug, leavesEnabled, pendingLeaveCount, user
                         padding: '0 4px', flexShrink: 0,
                         fontFamily: 'Plus Jakarta Sans, sans-serif',
                       }}>
-                        {pendingLeaveCount > 99 ? '99+' : pendingLeaveCount}
+                        {badgeCount > 99 ? '99+' : badgeCount}
                       </span>
                     )}
                     {!collapsed && hasSubItems && (

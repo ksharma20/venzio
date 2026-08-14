@@ -11,6 +11,7 @@ import {
 } from "@/lib/db/queries/workspaces";
 import { getUserById } from "@/lib/db/queries/users";
 import { getPendingLeaveCount } from "@/lib/db/queries/leaves";
+import { getPendingRegularizationCount } from "@/lib/db/queries/regularizations";
 
 interface Props {
   children: React.ReactNode;
@@ -42,10 +43,11 @@ export default async function WsSlugLayout({ children, params }: Props) {
     redirect("/me");
   }
 
-  const [dbUser, activeMemberIds, pendingLeaveCount] = await Promise.all([
+  const [dbUser, activeMemberIds, pendingLeaveCount, pendingRegularizationCount] = await Promise.all([
     getUserById(user.userId),
     getActiveMemberIds(workspace.id),
     workspace.leaves_enabled ? getPendingLeaveCount(workspace.id) : Promise.resolve(0),
+    getPendingRegularizationCount(workspace.id),
   ]);
 
   return (
@@ -61,6 +63,7 @@ export default async function WsSlugLayout({ children, params }: Props) {
         workspaceName={workspace.name}
         memberCount={activeMemberIds.length}
         pendingLeaveCount={pendingLeaveCount}
+        pendingApprovalsCount={pendingLeaveCount + pendingRegularizationCount}
         userName={dbUser?.full_name?.trim() || user.email}
         userRole={membership.role}
       >
