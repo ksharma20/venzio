@@ -7,6 +7,7 @@ import type { DashboardMember, DashboardResponse } from '@/app/api/ws/[slug]/das
 import type { InsightsResponse, InsightBucket } from '@/app/api/ws/[slug]/insights/route'
 import type { RealtimeResponse } from '@/app/api/ws/[slug]/realtime/route'
 import type { OverviewWidgetsResponse } from '@/app/api/ws/[slug]/overview/route'
+import type { ApprovalItem } from '@/lib/approvals'
 import { resolvePresenceTag, PRESENCE_TAG_CONFIG } from '@/lib/client/presence'
 import { en } from '@/locales/en'
 import { Users, Monitor, Home, Activity } from 'lucide-react'
@@ -586,10 +587,10 @@ export default function TodayClient({ slug, planLimitBanner, adminFirstName }: P
 
   const [approvingId, setApprovingId] = useState<string | null>(null)
 
-  async function approveLeaveRequest(id: string) {
-    setApprovingId(id)
+  async function approveItem(item: ApprovalItem) {
+    setApprovingId(item.id)
     try {
-      const res = await fetch(`/api/ws/${slug}/leaves/${id}`, {
+      const res = await fetch(`/api/ws/${slug}/approvals/${item.kind}/${item.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'approve' }),
@@ -616,11 +617,11 @@ export default function TodayClient({ slug, planLimitBanner, adminFirstName }: P
           </h1>
           <p style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px', color: 'var(--text-muted)' }}>
             {overview
-              ? overview.pendingLeaveRequests.length === 0
+              ? overview.pendingApprovalsTotal === 0
                 ? en.wsOverview.subtitleAllClear
-                : overview.pendingLeaveRequests.length === 1
+                : overview.pendingApprovalsTotal === 1
                   ? en.wsOverview.subtitlePendingSingular
-                  : en.wsOverview.subtitlePendingPlural.replace('{count}', String(overview.pendingLeaveRequests.length))
+                  : en.wsOverview.subtitlePendingPlural.replace('{count}', String(overview.pendingApprovalsTotal))
               : ' '}
             {lastUpdated ? ` · Updated ${lastUpdated.toLocaleTimeString()}` : ''}
           </p>
@@ -724,30 +725,34 @@ export default function TodayClient({ slug, planLimitBanner, adminFirstName }: P
         <div style={{ background: 'var(--surface-0)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
             <p style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '15px' }}>{en.wsOverview.pendingApprovalsTitle}</p>
-            {!!overview?.pendingLeaveRequests.length && (
+            {!!overview?.pendingApprovalsTotal && (
               <span style={{ background: 'color-mix(in srgb, var(--amber) 16%, transparent)', color: '#9a6200', fontSize: '11px', fontWeight: 700, padding: '3px 9px', borderRadius: '999px' }}>
-                {overview.pendingLeaveRequests.length}
+                {overview.pendingApprovalsTotal}
               </span>
             )}
           </div>
-          {overview && overview.pendingLeaveRequests.length === 0 && (
+          {overview && overview.pendingApprovals.length === 0 && (
             <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>{en.wsOverview.pendingApprovalsEmpty}</div>
           )}
-          {overview?.pendingLeaveRequests.map((r) => (
-            <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', borderTop: '1px solid var(--border)' }}>
+          {overview?.pendingApprovals.map((item) => (
+            <div key={`${item.kind}-${item.id}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', borderTop: '1px solid var(--border)' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontWeight: 600, fontSize: '13px' }}>{r.user_full_name ?? r.user_email}</p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '11.5px' }}>{r.leave_type_name} · {r.start_date} – {r.end_date} · {r.days}d</p>
+                <p style={{ fontWeight: 600, fontSize: '13px' }}>{item.user_full_name ?? item.user_email}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '11.5px' }}>
+                  {item.kind === 'leave'
+                    ? `${item.leave_type_name} · ${item.start_date} – ${item.end_date} · ${item.days}d`
+                    : `${item.requested_type === 'office' ? en.wsApprovals.markWfo : en.wsApprovals.markWfh} · ${item.target_date}`}
+                </p>
               </div>
               <button
-                onClick={() => approveLeaveRequest(r.id)}
-                disabled={approvingId === r.id}
+                onClick={() => approveItem(item)}
+                disabled={approvingId === item.id}
                 style={{ height: '30px', padding: '0 12px', borderRadius: 'var(--radius-sm)', background: 'var(--brand)', color: '#fff', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer' }}
               >
-                {approvingId === r.id ? '…' : 'Approve'}
+                {approvingId === item.id ? '…' : 'Approve'}
               </button>
               <Link
-                href={`/ws/${slug}/leaves`}
+                href={`/ws/${slug}/approvals`}
                 style={{ height: '30px', padding: '0 12px', display: 'inline-flex', alignItems: 'center', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}
               >
                 {en.wsOverview.reviewAction}
